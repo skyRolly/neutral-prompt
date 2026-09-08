@@ -1,0 +1,39 @@
+{
+  "name": "neutral-prompts",
+  "version": "0.1.0",
+  "description": "Neutral decision framing for Codex prompts: name every admissible outcome, state observable criteria, and require a decision record.",
+  "author": {
+    "name": "skyRolly",
+    "url": "https://github.com/skyRolly"
+  },
+  "homepage": "https://github.com/skyRolly/neutral-prompt",
+  "repository": "https://github.com/skyRolly/neutral-prompt",
+  "license": "MIT",
+  "keywords": [
+    "prompt-engineering",
+    "neutral-framing",
+    "decision-criteria",
+    "bias",
+    "review",
+    "skills",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Neutral Prompts",
+    "shortDescription": "Prompts that frame a decision instead of pre-answering it",
+    "longDescription": "Rewrite prompts so that wording stops carrying the answer: separate settled constraints from open decisions, name every admissible outcome, replace protected actions with observable criteria, and ask for the reasoning record rather than a particular conclusion.",
+    "developerName": "skyRolly",
+    "category": "Productivity",
+    "capabilities": [
+      "Instructions"
+    ],
+    "websiteURL": "https://github.com/skyRolly/neutral-prompt",
+    "defaultPrompt": [
+      "Use neutral-prompts to review this prompt for directional wording.",
+      "Rewrite this instruction as a neutral decision frame.",
+      "List the admissible outcomes and the criteria that select each one."
+    ],
+    "brandColor": "#334155"
+  }
+}
