@@ -1,0 +1,12 @@
+{
+  "name": "neutral-prompts",
+  "version": "0.1.0",
+  "description": "Write and review prompts that frame a decision instead of pre-answering it: name every admissible outcome, replace protected actions with decision criteria, and require a decision record.",
+  "license": "MIT",
+  "homepage": "https://github.com/skyRolly/neutral-prompt",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Neutral Prompts",
+    "shortDescription": "Neutral decision framing for Kimi Code CLI prompts"
+  }
+}
