@@ -10,7 +10,7 @@
 Copy/paste into your CLI prompt:
 
 ```text
-Install the neutral-prompts skill/plugin from https://github.com/skyRolly/neutral-prompt, refer to the repo's AGENTS.md for instructions.
+Install the neutral-prompt skill/plugin from https://github.com/skyRolly/neutral-prompt, refer to the repo's AGENTS.md for instructions.
 ```
 
 Or 🔗 [check the installation instructions](INSTALL.md).
@@ -65,7 +65,7 @@ decision — and stopping now requires overriding the prompt.
 
 ## The rules
 
-10 rules. Full text in [SKILL.md](./skills/neutral-prompts/SKILL.md).
+10 rules. Full text in [SKILL.md](./skills/neutral-prompt/SKILL.md).
 
 1. Separate settled constraints from open decisions.
 2. Name the decision, not the answer.
@@ -85,7 +85,7 @@ Directive wording is the correct form for a constraint.
 ## The scanner
 
 A prompt linter ships with the repo. It flags the twelve patterns catalogued in
-[`references/patterns.md`](./skills/neutral-prompts/references/patterns.md):
+[`references/patterns.md`](./skills/neutral-prompt/references/patterns.md):
 
 ```console
 $ python3 scripts/scan_prompt.py my-prompt.md
@@ -97,7 +97,7 @@ my-prompt.md:3:1  NP001  high  'Do NOT immediately stop'
 
 It finds phrasings, not intent. A hit on a settled constraint is correct as
 written — confirm what each phrase governs, then suppress the ones that are fine
-with `neutral-prompts: allow NP001` on the line or the line above.
+with `neutral-prompt: allow NP001` on the line or the line above.
 
 Measure it against the labeled cases in [`evals/`](./evals/README.md):
 
@@ -107,16 +107,16 @@ python3 scripts/run_evals.py scan
 
 ## Tune it
 
-Fork, edit `skills/neutral-prompts/SKILL.md`, then swap your copy in:
+Fork, edit `skills/neutral-prompt/SKILL.md`, then swap your copy in:
 
 ```bash
-claude plugin uninstall neutral-prompts            # drop the upstream copy first:
-claude plugin marketplace remove neutral-prompts   # fork and upstream share both names
+claude plugin uninstall neutral-prompt            # drop the upstream copy first:
+claude plugin marketplace remove neutral-prompt   # fork and upstream share both names
 claude plugin marketplace add <your-username>/neutral-prompt
-claude plugin install neutral-prompts@neutral-prompts
+claude plugin install neutral-prompt@neutral-prompt
 ```
 
-Restart Claude Code, then re-invoke `/neutral-prompts`.
+Restart Claude Code, then re-invoke `/neutral-prompt`.
 
 Adding a rule to the scanner means adding an entry to `references/patterns.md`, a
 `Rule` in `scripts/scan_prompt.py`, and a labeled case in `evals/cases.jsonl` —

@@ -3,7 +3,7 @@
 
 Reports phrasings that raise the prior on one outcome before an agent has
 evaluated anything. Every rule maps to an entry in
-skills/neutral-prompts/references/patterns.md, which explains the mechanism and
+skills/neutral-prompt/references/patterns.md, which explains the mechanism and
 gives a neutral replacement.
 
 The scanner finds phrasings, not intent. A hit on a settled constraint (a safety
@@ -17,7 +17,7 @@ Usage:
     python3 scripts/scan_prompt.py --list-rules
 
 Suppression:
-    Put `neutral-prompts: allow NP003` (or `allow all`) on the flagged line or
+    Put `neutral-prompt: allow NP003` (or `allow all`) on the flagged line or
     on the line directly above it. Several ids may be listed, comma-separated.
 
 Exit codes:
@@ -39,7 +39,7 @@ SEVERITIES = ("advisory", "medium", "high")
 SEVERITY_RANK = {name: index for index, name in enumerate(SEVERITIES)}
 
 SUPPRESS_RE = re.compile(
-    r"neutral-prompts:\s*allow\s+(all|NP\d{3}(?:\s*,\s*NP\d{3})*)",
+    r"neutral-prompt:\s*allow\s+(all|NP\d{3}(?:\s*,\s*NP\d{3})*)",
     re.IGNORECASE,
 )
 
@@ -372,7 +372,7 @@ def list_rules() -> str:
     rows.append(
         f"{COVERAGE_RULE.id}  {COVERAGE_RULE.severity:<8}  {COVERAGE_RULE.title}"
     )
-    header = "See skills/neutral-prompts/references/patterns.md for the full entries.\n"
+    header = "See skills/neutral-prompt/references/patterns.md for the full entries.\n"
     return header + "\n".join(rows)
 
 

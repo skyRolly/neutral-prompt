@@ -1,11 +1,11 @@
 {
-  "name": "neutral-prompts",
+  "name": "neutral-prompt",
   "interface": {
     "displayName": "Neutral Prompts"
   },
   "plugins": [
     {
-      "name": "neutral-prompts",
+      "name": "neutral-prompt",
       "source": {
         "source": "url",
         "url": "https://github.com/skyRolly/neutral-prompt.git",

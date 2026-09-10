@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL_NAME = "neutral-prompts"
+SKILL_NAME = "neutral-prompt"
 SKILL_DIR = ROOT / "skills" / SKILL_NAME
 SKILL_PATH = SKILL_DIR / "SKILL.md"
 MIRROR_PATH = ROOT / ".cursor" / "skills" / SKILL_NAME / "SKILL.md"
@@ -106,7 +106,7 @@ class MirrorTest(unittest.TestCase):
         self.assertEqual(
             MIRROR_PATH.read_bytes(),
             SKILL_PATH.read_bytes(),
-            "run: cp skills/neutral-prompts/SKILL.md .cursor/skills/neutral-prompts/SKILL.md",
+            "run: cp skills/neutral-prompt/SKILL.md .cursor/skills/neutral-prompt/SKILL.md",
         )
 
     def test_mirror_is_a_real_file_not_a_symlink(self):
@@ -204,7 +204,7 @@ class AlwaysOnHookTest(unittest.TestCase):
         )
 
     def set_flag(self):
-        (self.config_dir / ".neutral-prompts-always").write_text("", encoding="utf-8")
+        (self.config_dir / ".neutral-prompt-always").write_text("", encoding="utf-8")
 
     def test_silent_without_the_flag(self):
         result = self.run_hook()
@@ -227,7 +227,7 @@ class AlwaysOnHookTest(unittest.TestCase):
         self.set_flag()
         result = self.run_hook()
         self.assertIn("stop neutral mode", result.stdout)
-        self.assertIn(str(self.config_dir / ".neutral-prompts-always"), result.stdout)
+        self.assertIn(str(self.config_dir / ".neutral-prompt-always"), result.stdout)
 
     def test_exits_zero_when_the_skill_is_missing(self):
         self.set_flag()

@@ -25,7 +25,7 @@
 
 ## Scanner rules — complete this section when a rule is added or changed
 
-- [ ] Catalog entry in `skills/neutral-prompts/references/patterns.md`.
+- [ ] Catalog entry in `skills/neutral-prompt/references/patterns.md`.
 - [ ] `Rule` in `scripts/scan_prompt.py` with the same id, a severity, a `why`, and a `suggestion`.
 - [ ] At least one `directional` case in `evals/cases.jsonl` that the rule must catch.
 - [ ] At least one `neutral` case the rule must not fire on, or a recorded known limitation with a `note`.

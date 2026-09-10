@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving **neutral-prompts**. Contributions from humans and coding
+Thanks for improving **neutral-prompt**. Contributions from humans and coding
 agents are welcome. Keep changes understandable, reviewable, safe to run, and
 compatible with existing users.
 
@@ -47,7 +47,7 @@ breaking changes in an issue first.
 A rule exists in three places, and the checks fail until all three agree:
 
 1. **The catalog** — an entry in
-   `skills/neutral-prompts/references/patterns.md` with an id, a detection cue,
+   `skills/neutral-prompt/references/patterns.md` with an id, a detection cue,
    the mechanism, and a neutral replacement.
 2. **The detector** — a `Rule` in `scripts/scan_prompt.py` with the same id, a
    severity, a `why` sentence, and a `suggestion`.
@@ -139,12 +139,12 @@ A breaking change requires an issue, a migration path, updated documentation, an
 a compatibility or deprecation plan. Prefer additive, staged changes. Retire a
 scanner rule id rather than reusing it for a different pattern.
 
-`skills/neutral-prompts/SKILL.md` is canonical. When it changes, synchronize the
+`skills/neutral-prompt/SKILL.md` is canonical. When it changes, synchronize the
 Cursor copy:
 
 ```sh
-cp skills/neutral-prompts/SKILL.md .cursor/skills/neutral-prompts/SKILL.md
-cmp skills/neutral-prompts/SKILL.md .cursor/skills/neutral-prompts/SKILL.md
+cp skills/neutral-prompt/SKILL.md .cursor/skills/neutral-prompt/SKILL.md
+cmp skills/neutral-prompt/SKILL.md .cursor/skills/neutral-prompt/SKILL.md
 ```
 
 Review platform-specific manifests and documentation whenever shared names,

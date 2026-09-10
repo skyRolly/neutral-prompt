@@ -7,10 +7,10 @@
 
 ```bash
 claude plugin marketplace add skyRolly/neutral-prompt
-claude plugin install neutral-prompts@neutral-prompts
+claude plugin install neutral-prompt@neutral-prompt
 ```
 
-Type `/neutral-prompts`.
+Type `/neutral-prompt`.
 
 ### Verify
 
@@ -21,37 +21,37 @@ claude plugin list
 ### Update
 
 ```bash
-claude plugin marketplace update neutral-prompts
+claude plugin marketplace update neutral-prompt
 ```
 
 ### Uninstall
 
 ```bash
-claude plugin uninstall neutral-prompts
-claude plugin marketplace remove neutral-prompts
+claude plugin uninstall neutral-prompt
+claude plugin marketplace remove neutral-prompt
 ```
 
-Or keep it installed and turn it off: `claude plugin disable neutral-prompts`.
+Or keep it installed and turn it off: `claude plugin disable neutral-prompt`.
 
 ### Always-on (optional)
 
 A `SessionStart` hook loads the full ruleset at the start of every session, no
-`/neutral-prompts` needed:
+`/neutral-prompt` needed:
 
 ```bash
-touch ~/.claude/.neutral-prompts-always
+touch ~/.claude/.neutral-prompt-always
 ```
 
 If you use a custom Claude configuration directory, create the flag there instead:
 
 ```bash
-touch "$CLAUDE_CONFIG_DIR/.neutral-prompts-always"
+touch "$CLAUDE_CONFIG_DIR/.neutral-prompt-always"
 ```
 
 Back to on-demand:
 
 ```bash
-rm ~/.claude/.neutral-prompts-always
+rm ~/.claude/.neutral-prompt-always
 ```
 
 The hook only fires when the flag file exists, so installing the plugin changes
@@ -66,11 +66,11 @@ nothing by itself. "stop neutral mode" still turns it off for the current sessio
 
 ```bash
 codex plugin marketplace add skyRolly/neutral-prompt --ref main
-codex plugin add neutral-prompts@neutral-prompts
+codex plugin add neutral-prompt@neutral-prompt
 ```
 
-Invoke the skill explicitly by typing `$neutral-prompts`. Codex will not activate
-it automatically: `skills/neutral-prompts/agents/openai.yaml` sets
+Invoke the skill explicitly by typing `$neutral-prompt`. Codex will not activate
+it automatically: `skills/neutral-prompt/agents/openai.yaml` sets
 `policy.allow_implicit_invocation: false`.
 
 ### Verify
@@ -82,16 +82,16 @@ codex plugin list
 ### Update
 
 ```bash
-codex plugin marketplace upgrade neutral-prompts
-codex plugin remove neutral-prompts
-codex plugin add neutral-prompts@neutral-prompts
+codex plugin marketplace upgrade neutral-prompt
+codex plugin remove neutral-prompt
+codex plugin add neutral-prompt@neutral-prompt
 ```
 
 ### Uninstall
 
 ```bash
-codex plugin remove neutral-prompts
-codex plugin marketplace remove neutral-prompts
+codex plugin remove neutral-prompt
+codex plugin marketplace remove neutral-prompt
 ```
 
 ### Always-on (optional)
@@ -136,11 +136,11 @@ you want the rules on every session.
 
 ```bash
 mkdir -p ~/.gemini/commands
-curl -fsSL https://raw.githubusercontent.com/skyRolly/neutral-prompt/main/skills/neutral-prompts/agents/gemini.toml \
-  -o ~/.gemini/commands/neutral-prompts.toml
+curl -fsSL https://raw.githubusercontent.com/skyRolly/neutral-prompt/main/skills/neutral-prompt/agents/gemini.toml \
+  -o ~/.gemini/commands/neutral-prompt.toml
 ```
 
-Start a new session, type `/neutral-prompts`. It stays on for that session.
+Start a new session, type `/neutral-prompt`. It stays on for that session.
 
 ### Install (extension, always-on)
 
@@ -155,23 +155,23 @@ from message one. `git` must be installed.
 
 ```bash
 gemini extensions list          # extension route
-ls ~/.gemini/commands           # command route: neutral-prompts.toml present
+ls ~/.gemini/commands           # command route: neutral-prompt.toml present
 ```
 
-Or type `/` in a session and confirm `neutral-prompts` is listed.
+Or type `/` in a session and confirm `neutral-prompt` is listed.
 
 ### Update
 
 ```bash
-gemini extensions update neutral-prompts    # extension route
+gemini extensions update neutral-prompt    # extension route
 # command route: re-run the curl above
 ```
 
 ### Uninstall
 
 ```bash
-gemini extensions uninstall neutral-prompts    # extension route
-rm ~/.gemini/commands/neutral-prompts.toml     # command route
+gemini extensions uninstall neutral-prompt    # extension route
+rm ~/.gemini/commands/neutral-prompt.toml     # command route
 ```
 
 </details>
@@ -195,12 +195,12 @@ Without the CLI, copy the skill folder into any directory Copilot scans:
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
 mkdir -p ~/.copilot/skills
-cp -R neutral-prompt/skills/neutral-prompts ~/.copilot/skills/
+cp -R neutral-prompt/skills/neutral-prompt ~/.copilot/skills/
 ```
 
 ### Verify
 
-Type `/` in the chat input and confirm `neutral-prompts` appears. Or:
+Type `/` in the chat input and confirm `neutral-prompt` appears. Or:
 
 ```bash
 npx skills list
@@ -210,7 +210,7 @@ npx skills ls -g    # if installed globally
 ### Update
 
 ```bash
-npx skills update neutral-prompts
+npx skills update neutral-prompt
 ```
 
 Or re-copy the folder after `git pull`.
@@ -218,7 +218,7 @@ Or re-copy the folder after `git pull`.
 ### Uninstall
 
 ```bash
-npx skills remove neutral-prompts
+npx skills remove neutral-prompt
 ```
 
 ### Always-on (optional)
@@ -263,7 +263,7 @@ Start a Kimi Code session, then:
 3. Paste `https://github.com/skyRolly/neutral-prompt` and press `Enter`.
 4. Choose **Trust and install**.
 
-Use the slash command `/skill:neutral-prompts` to invoke the skill explicitly.
+Use the slash command `/skill:neutral-prompt` to invoke the skill explicitly.
 
 ### Update
 
@@ -279,8 +279,8 @@ Use the slash command `/skill:neutral-prompts` to invoke the skill explicitly.
 <summary><strong>OpenCode</strong></summary>
 
 OpenCode reads `skills/` natively, so the skill works from any directory OpenCode
-scans. The repository also ships `.opencode/command/neutral-prompts.md`, which adds
-a `/neutral-prompts` command to a project that has it.
+scans. The repository also ships `.opencode/command/neutral-prompt.md`, which adds
+a `/neutral-prompt` command to a project that has it.
 
 ### Install
 
@@ -293,26 +293,26 @@ Or copy both pieces by hand:
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
 mkdir -p ~/.config/opencode/skills ~/.config/opencode/command
-cp -R neutral-prompt/skills/neutral-prompts ~/.config/opencode/skills/
-cp neutral-prompt/.opencode/command/neutral-prompts.md ~/.config/opencode/command/
+cp -R neutral-prompt/skills/neutral-prompt ~/.config/opencode/skills/
+cp neutral-prompt/.opencode/command/neutral-prompt.md ~/.config/opencode/command/
 ```
 
 ### Verify
 
-Start OpenCode, type `/`, and confirm `neutral-prompts` appears.
+Start OpenCode, type `/`, and confirm `neutral-prompt` appears.
 
 ### Update
 
 ```bash
-npx skills update neutral-prompts
+npx skills update neutral-prompt
 ```
 
 Or re-copy after `git pull`.
 
 ### Uninstall
 
-Delete `neutral-prompts` from the skills directory it landed in, and remove
-`command/neutral-prompts.md`.
+Delete `neutral-prompt` from the skills directory it landed in, and remove
+`command/neutral-prompt.md`.
 
 ### Always-on (optional)
 
@@ -356,7 +356,7 @@ qwen extensions install skyRolly/neutral-prompt
 Qwen Code supports the GitHub shorthand and installs the repository as a native
 extension. The extension discovers the skill under `skills/`.
 
-Type `/neutral-prompts` to invoke the skill explicitly. Installing the extension
+Type `/neutral-prompt` to invoke the skill explicitly. Installing the extension
 does not change behavior until the skill is invoked.
 
 ### Verify
@@ -371,18 +371,18 @@ Then start a new Qwen Code session and run:
 /skills
 ```
 
-Confirm that `neutral-prompts` appears in the list.
+Confirm that `neutral-prompt` appears in the list.
 
 ### Update
 
 ```bash
-qwen extensions update neutral-prompts
+qwen extensions update neutral-prompt
 ```
 
 ### Uninstall
 
 ```bash
-qwen extensions uninstall neutral-prompts
+qwen extensions uninstall neutral-prompt
 ```
 
 </details>
@@ -398,23 +398,23 @@ In the Agent Panel, open the Skills manager and choose **Create skill from URL**
 (also in the command palette as `agent: create skill from url`), then paste:
 
 ```
-https://github.com/skyRolly/neutral-prompt/blob/main/skills/neutral-prompts/SKILL.md
+https://github.com/skyRolly/neutral-prompt/blob/main/skills/neutral-prompt/SKILL.md
 ```
 
 Save it in **User** scope for every project, or **Project** scope for one. Then
-type `/neutral-prompts` in the Agent Panel.
+type `/neutral-prompt` in the Agent Panel.
 
 Prefer the filesystem? Clone the repo and drop the skill folder into your user
 skills directory:
 
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
-cp -R neutral-prompt/skills/neutral-prompts ~/.config/zed/skills/
+cp -R neutral-prompt/skills/neutral-prompt ~/.config/zed/skills/
 ```
 
 ### Verify
 
-Open the Skills manager in the Agent Panel and confirm `neutral-prompts` is
+Open the Skills manager in the Agent Panel and confirm `neutral-prompt` is
 listed. Or type `/` and confirm it appears.
 
 ### Update
@@ -423,8 +423,8 @@ Re-import from the same URL (overwrites), or re-copy the folder after `git pull`
 
 ### Uninstall
 
-Remove `neutral-prompts` from the Skills manager, or delete
-`~/.config/zed/skills/neutral-prompts`.
+Remove `neutral-prompt` from the Skills manager, or delete
+`~/.config/zed/skills/neutral-prompt`.
 
 ### Always-on (optional)
 
@@ -469,14 +469,14 @@ npx skills add skyRolly/neutral-prompt -g               # all projects
 npx skills add skyRolly/neutral-prompt -a cursor -y     # one agent only
 ```
 
-New agent chat, type `/neutral-prompts`.
+New agent chat, type `/neutral-prompt`.
 
 Without the CLI, copy the skill folder into whatever path your agent scans:
 
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
 mkdir -p ~/.cursor/skills     # Cursor. Use .agents/skills for OpenCode, or your agent's own path
-cp -R neutral-prompt/skills/neutral-prompts ~/.cursor/skills/
+cp -R neutral-prompt/skills/neutral-prompt ~/.cursor/skills/
 ```
 
 ### Verify
@@ -489,15 +489,15 @@ npx skills ls -g    # if installed globally
 ### Update
 
 ```bash
-npx skills update neutral-prompts
+npx skills update neutral-prompt
 npx skills update -g    # if installed globally
 ```
 
 ### Uninstall
 
 ```bash
-npx skills remove neutral-prompts
-npx skills remove neutral-prompts -g    # if installed globally
+npx skills remove neutral-prompt
+npx skills remove neutral-prompt -g    # if installed globally
 ```
 
 ### Always-on (optional)
@@ -553,10 +553,10 @@ for the measured detection coverage.
    `policy.allow_implicit_invocation: false` in `agents/openai.yaml`. Other
    harnesses may load every skill's description at startup and activate the skill
    themselves.
-2. **You invoke it explicitly.** Type `/neutral-prompts` in Claude Code or Qwen
-   Code, or `$neutral-prompts` in Codex. The rules stay on for that session.
+2. **You invoke it explicitly.** Type `/neutral-prompt` in Claude Code or Qwen
+   Code, or `$neutral-prompt` in Codex. The rules stay on for that session.
    "stop neutral mode" or "normal mode" turns them off.
-3. **You touch `~/.claude/.neutral-prompts-always`** (Claude Code). A
+3. **You touch `~/.claude/.neutral-prompt-always`** (Claude Code). A
    `SessionStart` hook loads the full ruleset from message one, every session.
 4. **You add the always-on snippet above** (other harnesses). Keeps the core rules
    in your agent's persistent context.
@@ -566,11 +566,11 @@ turn it on, it is off.
 
 ## Troubleshooting
 
-**`/neutral-prompts` not in autocomplete.** Restart the agent. The plugin index is
+**`/neutral-prompt` not in autocomplete.** Restart the agent. The plugin index is
 read at startup.
 
 **Always-on flag has no effect.** Update the plugin
-(`claude plugin marketplace update neutral-prompts`) and restart. Hooks are read
+(`claude plugin marketplace update neutral-prompt`) and restart. Hooks are read
 at startup, and the flag needs the plugin version that ships `hooks/hooks.json`.
 
 **`claude plugin marketplace add` fails.** Use the `owner/repo` form. A local path
@@ -578,10 +578,10 @@ must point at the repo root, not `.claude-plugin/`.
 
 **Installed, but prompts still read as directional.** Open a new session. If it
 still drifts, run `python3 scripts/scan_prompt.py` over the prompt to see which
-rule it trips, then tighten the wording in `skills/neutral-prompts/SKILL.md`.
+rule it trips, then tighten the wording in `skills/neutral-prompt/SKILL.md`.
 
 **The scanner flags a constraint that is correct as written.** That is expected —
-it matches phrasings, not intent. Suppress it with `neutral-prompts: allow NP003`
+it matches phrasings, not intent. Suppress it with `neutral-prompt: allow NP003`
 on the line or the line above, and say in the surrounding text why the phrase is a
 settled constraint.
 
@@ -589,7 +589,3 @@ settled constraint.
 indexed at session start. Confirm the folder landed where your agent scans
 (`~/.cursor/skills/` for Cursor, `.agents/skills/` for OpenCode) and that the
 frontmatter `name` matches the folder name.
-
-**The repository is `neutral-prompt`; the skill is `neutral-prompts`.** Install
-commands that name a repository take `skyRolly/neutral-prompt`; commands that name
-the plugin or skill take `neutral-prompts`.
