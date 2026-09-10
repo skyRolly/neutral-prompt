@@ -1,6 +1,6 @@
 {
-  "name": "neutral-prompts",
-  "version": "0.1.0",
+  "name": "neutral-prompt",
+  "version": "0.2.0",
   "description": "Neutral decision framing for Codex prompts: name every admissible outcome, state observable criteria, and require a decision record.",
   "author": {
     "name": "skyRolly",
@@ -30,7 +30,7 @@
     ],
     "websiteURL": "https://github.com/skyRolly/neutral-prompt",
     "defaultPrompt": [
-      "Use neutral-prompts to review this prompt for directional wording.",
+      "Use neutral-prompt to review this prompt for directional wording.",
       "Rewrite this instruction as a neutral decision frame.",
       "List the admissible outcomes and the criteria that select each one."
     ],

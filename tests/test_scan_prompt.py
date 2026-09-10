@@ -112,27 +112,27 @@ class NeutralTextTest(unittest.TestCase):
 
 class SuppressionTest(unittest.TestCase):
     def test_same_line_suppression(self):
-        text = "Do not stop them.  <!-- neutral-prompts: allow NP001 -->"
+        text = "Do not stop them.  <!-- neutral-prompt: allow NP001 -->"
         self.assertNotIn("NP001", rule_ids(text))
 
     def test_preceding_line_suppression(self):
-        text = "<!-- neutral-prompts: allow NP001 -->\nDo not stop them."
+        text = "<!-- neutral-prompt: allow NP001 -->\nDo not stop them."
         self.assertNotIn("NP001", rule_ids(text))
 
     def test_suppression_does_not_leak_two_lines_down(self):
-        text = "<!-- neutral-prompts: allow NP001 -->\nfiller line\nDo not stop them."
+        text = "<!-- neutral-prompt: allow NP001 -->\nfiller line\nDo not stop them."
         self.assertIn("NP001", rule_ids(text))
 
     def test_allow_all(self):
-        text = "neutral-prompts: allow all\nDo not stop them and never reject anything."
+        text = "neutral-prompt: allow all\nDo not stop them and never reject anything."
         self.assertEqual(rule_ids(text), [])
 
     def test_multiple_ids(self):
-        text = "Do not stop them. <!-- neutral-prompts: allow NP001, NP012 -->"
+        text = "Do not stop them. <!-- neutral-prompt: allow NP001, NP012 -->"
         self.assertEqual(rule_ids(text), [])
 
     def test_other_ids_still_report(self):
-        text = "Do not stop them prematurely. <!-- neutral-prompts: allow NP001 -->"
+        text = "Do not stop them prematurely. <!-- neutral-prompt: allow NP001 -->"
         self.assertIn("NP008", rule_ids(text))
 
 

@@ -1,7 +1,7 @@
 interface:
   display_name: "Neutral Prompts"
   short_description: "Prompts that frame a decision instead of pre-answering it"
-  default_prompt: "Use $neutral-prompts to review this prompt for directional wording and rewrite it as a decision frame."
+  default_prompt: "Use $neutral-prompt to review this prompt for directional wording and rewrite it as a decision frame."
 
 policy:
   allow_implicit_invocation: false

@@ -1,5 +1,5 @@
-// SessionStart hook: injects the full neutral-prompts ruleset when the user has
-// opted in by creating $CLAUDE_CONFIG_DIR/.neutral-prompts-always (default ~/.claude).
+// SessionStart hook: injects the full neutral-prompt ruleset when the user has
+// opted in by creating $CLAUDE_CONFIG_DIR/.neutral-prompt-always (default ~/.claude).
 // Never blocks session start: any failure exits 0.
 //
 // Runs under Node so it works on macOS, Linux, and Windows. The hook declaration
@@ -13,14 +13,14 @@ import { fileURLToPath } from "node:url";
 
 try {
   const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude");
-  const flagPath = path.join(claudeDir, ".neutral-prompts-always");
+  const flagPath = path.join(claudeDir, ".neutral-prompt-always");
 
   // Only fire when the user has opted in.
   if (!fs.existsSync(flagPath)) process.exit(0);
 
   // Resolve SKILL.md relative to this script's own location, not a trusted env var.
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
-  const skillPath = path.join(scriptDir, "..", "skills", "neutral-prompts", "SKILL.md");
+  const skillPath = path.join(scriptDir, "..", "skills", "neutral-prompt", "SKILL.md");
   if (!fs.existsSync(skillPath)) process.exit(0);
 
   // Strip a leading YAML frontmatter block (--- ... --- at the very top of file).

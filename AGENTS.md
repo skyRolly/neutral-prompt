@@ -1,16 +1,16 @@
 # Agent guide
 
 This file is the map for agents working with
-[neutral-prompts](https://github.com/skyRolly/neutral-prompt). Read it after
+[neutral-prompt](https://github.com/skyRolly/neutral-prompt). Read it after
 locating or installing the repository. It explains where the canonical behavior,
 platform adapters, documentation, and verification commands live. It does not
-replace the skill rules in `skills/neutral-prompts/SKILL.md`.
+replace the skill rules in `skills/neutral-prompt/SKILL.md`.
 
 ## Start here
 
 1. Read `README.md` for the purpose and user-facing behavior.
 2. Read `INSTALL.md` for installation paths and platform-specific setup.
-3. Read `skills/neutral-prompts/SKILL.md` for the canonical skill behavior.
+3. Read `skills/neutral-prompt/SKILL.md` for the canonical skill behavior.
 4. Read `CONTRIBUTING.md` and `.github/pull_request_template.md` before proposing
    changes.
 5. Inspect the entry point for the target runtime, then run the smallest relevant
@@ -26,10 +26,10 @@ user-approved task.
 
 | Area | Location | Purpose |
 | --- | --- | --- |
-| Canonical skill | `skills/neutral-prompts/SKILL.md` | The source of truth for the 10 neutral-framing rules. |
-| Skill references | `skills/neutral-prompts/references/` | Pattern catalog, worked rewrites, and the decision-record format, loaded on demand. |
-| Runtime adapters | `skills/neutral-prompts/agents/` | Gemini CLI command and Codex invocation policy. |
-| Skill mirror | `.cursor/skills/neutral-prompts/SKILL.md` | Cursor-compatible copy; keep it byte-identical to the canonical skill. |
+| Canonical skill | `skills/neutral-prompt/SKILL.md` | The source of truth for the 10 neutral-framing rules. |
+| Skill references | `skills/neutral-prompt/references/` | Pattern catalog, worked rewrites, and the decision-record format, loaded on demand. |
+| Runtime adapters | `skills/neutral-prompt/agents/` | Gemini CLI command and Codex invocation policy. |
+| Skill mirror | `.cursor/skills/neutral-prompt/SKILL.md` | Cursor-compatible copy; keep it byte-identical to the canonical skill. |
 | Claude and Codex metadata | `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | Plugin manifests and marketplace metadata. |
 | Hooks | `hooks/hooks.json`, `hooks/always-on.mjs` | Opt-in `SessionStart` injection of the ruleset. |
 | Other runtimes | `gemini-extension.json`, `qwen-extension.json`, `kimi.plugin.json`, `GEMINI.md`, `.opencode/` | Gemini, Qwen, Kimi, and OpenCode entry points. |
@@ -45,18 +45,18 @@ When debugging or changing one integration, begin with its entry point:
 | Runtime | Read first |
 | --- | --- |
 | Claude Code | `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `hooks/hooks.json`, `hooks/always-on.mjs` |
-| Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/neutral-prompts/agents/openai.yaml` |
-| Gemini CLI | `gemini-extension.json`, `GEMINI.md`, `skills/neutral-prompts/agents/gemini.toml` |
+| Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/neutral-prompt/agents/openai.yaml` |
+| Gemini CLI | `gemini-extension.json`, `GEMINI.md`, `skills/neutral-prompt/agents/gemini.toml` |
 | Qwen Code, Kimi Code | `qwen-extension.json`, `kimi.plugin.json` |
-| OpenCode | `.opencode/command/neutral-prompts.md` (OpenCode also reads `skills/` natively) |
-| Cursor, Copilot, Zed, other skills harnesses | `skills/neutral-prompts/SKILL.md`, `.cursor/skills/neutral-prompts/SKILL.md` |
+| OpenCode | `.opencode/command/neutral-prompt.md` (OpenCode also reads `skills/` natively) |
+| Cursor, Copilot, Zed, other skills harnesses | `skills/neutral-prompt/SKILL.md`, `.cursor/skills/neutral-prompt/SKILL.md` |
 
 ## Source-of-truth rules
 
-- Change `skills/neutral-prompts/SKILL.md` first when changing skill behavior,
+- Change `skills/neutral-prompt/SKILL.md` first when changing skill behavior,
   then synchronize the `.cursor` mirror.
 - A scanner rule exists in three places at once: an entry in
-  `skills/neutral-prompts/references/patterns.md`, a `Rule` in
+  `skills/neutral-prompt/references/patterns.md`, a `Rule` in
   `scripts/scan_prompt.py`, and at least one labeled case in
   `evals/cases.jsonl`. `python3 scripts/run_evals.py scan` fails until the three
   agree, and `tests/test_run_evals.py` fails when a rule has no labeled case.

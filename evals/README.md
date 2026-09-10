@@ -65,7 +65,7 @@ or is balanced by a neighbouring sentence:
   lean. Flags NP003.
 
 Both are the expected shape of the tool's limits: it matches phrasings, not
-intent. Suppress a confirmed false positive with `neutral-prompts: allow NP003`
+intent. Suppress a confirmed false positive with `neutral-prompt: allow NP003`
 on the line or the line above.
 
 ### What this number is not
@@ -88,7 +88,7 @@ Keep the comparison honest:
 - **Isolate the call from your own agent configuration.** User-level plugins,
   hooks, memory, and output styles otherwise leak into every condition. The
   sharpest case is this repository's own always-on flag
-  (`~/.claude/.neutral-prompts-always`), which would inject the full ruleset into
+  (`~/.claude/.neutral-prompt-always`), which would inject the full ruleset into
   the *baseline* condition and make the comparison measure the skill against
   itself.
 - **Pin the model explicitly.** Isolation drops saved model and effort settings,

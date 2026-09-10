@@ -1,6 +1,6 @@
 {
-  "name": "neutral-prompts",
-  "version": "0.1.0",
+  "name": "neutral-prompt",
+  "version": "0.2.0",
   "description": "Write and review prompts that frame a decision instead of pre-answering it: name every admissible outcome, replace protected actions with decision criteria, and require a decision record.",
   "author": {
     "name": "skyRolly",

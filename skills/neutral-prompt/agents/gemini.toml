@@ -1,5 +1,5 @@
-# Gemini CLI custom command for neutral-prompts.
-# Install: copy to ~/.gemini/commands/neutral-prompts.toml, then type /neutral-prompts.
+# Gemini CLI custom command for neutral-prompt.
+# Install: copy to ~/.gemini/commands/neutral-prompt.toml, then type /neutral-prompt.
 # Self-contained so it works as a global command from any directory.
 
 description = "Neutral decision framing: name the outcomes, state the criteria, leave the choice to the evidence."

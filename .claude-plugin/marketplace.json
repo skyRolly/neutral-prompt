@@ -1,13 +1,13 @@
 {
   "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
-  "name": "neutral-prompts",
+  "name": "neutral-prompt",
   "description": "Neutral decision framing for prompts. Name the outcomes, state the criteria, leave the choice to the evidence.",
   "owner": {
     "name": "skyRolly"
   },
   "plugins": [
     {
-      "name": "neutral-prompts",
+      "name": "neutral-prompt",
       "description": "Detect and remove directional wording from prompts that delegate a decision.",
       "source": "./",
       "category": "prompt-engineering"

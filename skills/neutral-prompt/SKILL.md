@@ -1,6 +1,6 @@
 ---
-name: neutral-prompts
-description: 'Write and review prompts that frame a decision instead of pre-answering it: name every admissible outcome, replace protected actions with decision criteria, put evidence before the verdict, and require a decision record. Covers workflow and sub-agent lifecycle, code review, investigation depth, and accept/reject calls. Invoke with /neutral-prompts; stays on until "stop neutral mode".'
+name: neutral-prompt
+description: 'Write and review prompts that frame a decision instead of pre-answering it: name every admissible outcome, replace protected actions with decision criteria, put evidence before the verdict, and require a decision record. Covers workflow and sub-agent lifecycle, code review, investigation depth, and accept/reject calls. Invoke with /neutral-prompt; stays on until "stop neutral mode".'
 disable-model-invocation: true
 license: MIT
 metadata:
@@ -8,7 +8,7 @@ metadata:
   category: "prompt-engineering"
 ---
 
-# neutral-prompts
+# neutral-prompt
 
 Every prompt that hands a decision to an agent also hands it a prior. Wording sets how much weight each outcome carries before a single piece of evidence is gathered. This skill keeps that starting weight even.
 
