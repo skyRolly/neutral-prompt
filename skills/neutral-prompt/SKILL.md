@@ -115,7 +115,7 @@ Watch the modal verbs. "Must continue" against "may stop" is a ranking. So is "c
 State what the agent would have to see to select each outcome. A criterion that cannot be checked against the workspace is a preference in disguise.
 
 Bad: "Stop the sub-agent if it is no longer valuable."
-Good: "Continue the sub-agent while any of its remaining steps targets a file no other agent has covered and at least one of its last three outputs adds a finding not already in the report. Stop it when its last three outputs restate findings already in the report, or when every file its remaining steps target is already covered by another agent."
+Good: "Stop the sub-agent when it has produced at least three outputs and each of the last three restates a finding already in the report, or when every file its remaining steps target is already covered by another agent. Continue it when at least one of its remaining steps targets a file no other agent has covered and either it has produced fewer than three outputs or at least one of its last three outputs is not a restatement of a finding already in the report."
 
 Vague quantities are the usual leak: "enough", "sufficient", "significant", "reasonable", "as needed". Replace them with a count, a file, a test, a time budget, or a named condition.
 

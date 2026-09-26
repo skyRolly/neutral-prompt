@@ -223,6 +223,17 @@ class ReferenceTest(unittest.TestCase):
             with self.subTest(reference=path.name):
                 self.assertIn(f"references/{path.name}", text)
 
+    def test_rule_8_example_matches_its_catalog_entry(self):
+        # SKILL.md rule 8's Good example and patterns.md NP010's Neutral example are
+        # one text; a fix to one must reach the other.
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        rule_8 = skill.split("### 8. ", 1)[1].split("\n### ", 1)[0]
+        good = re.search(r'^Good: "(.+)"$', rule_8, re.M).group(1)
+        catalog = (SKILL_DIR / "references" / "patterns.md").read_text(encoding="utf-8")
+        np010 = catalog.split("## NP010 ", 1)[1].split("\n---", 1)[0]
+        neutral = re.search(r'\*\*Neutral:\*\* "(.+?)"', np010, re.S).group(1)
+        self.assertEqual(" ".join(neutral.split()), good)
+
     def test_every_skill_path_mentioned_anywhere_exists(self):
         for path in tracked_text_files():
             for slug in set(SKILL_PATH_RE.findall(path.read_text(encoding="utf-8"))):

@@ -164,11 +164,12 @@ to whatever the surrounding wording already implied. Vagueness does not stay
 neutral; it inherits the nearest lean.
 
 **Bad:** "Stop the sub-agent when it is no longer providing significant value."
-**Neutral:** "Continue the sub-agent while any of its remaining steps targets a
-file no other agent has covered and at least one of its last three outputs adds a
-finding not already in the report. Stop it when its last three outputs restate
-findings already in the report, or when every file its remaining steps target is
-already covered by another agent."
+**Neutral:** "Stop the sub-agent when it has produced at least three outputs and
+each of the last three restates a finding already in the report, or when every
+file its remaining steps target is already covered by another agent. Continue it
+when at least one of its remaining steps targets a file no other agent has
+covered and either it has produced fewer than three outputs or at least one of
+its last three outputs is not a restatement of a finding already in the report."
 
 ---
 
