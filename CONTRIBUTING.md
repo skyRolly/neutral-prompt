@@ -149,7 +149,9 @@ cmp skills/neutral-prompt/SKILL.md .cursor/skills/neutral-prompt/SKILL.md
 
 Review platform-specific manifests and documentation whenever shared names,
 descriptions, paths, or behavior change. Bump the version in every versioned
-manifest together; `tests/test_repo_integrity.py` fails when they drift.
+manifest together whenever shipped content changes (the skill, its references,
+hooks, or manifests): `claude plugin update` compares versions and skips a
+same-version change. `tests/test_repo_integrity.py` fails when the versions drift.
 
 ## Verification
 
@@ -159,6 +161,8 @@ Run the relevant checks and include the commands and results in the PR:
 python3 -m unittest discover -s tests -v
 python3 scripts/run_evals.py validate
 python3 scripts/run_evals.py scan
+claude plugin validate .                            # for a manifest change
+claude plugin validate .claude-plugin/plugin.json   # for a manifest or hook change
 ```
 
 For a behavior change to the skill rules, add or update representative cases and

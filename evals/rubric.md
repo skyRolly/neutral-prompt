@@ -16,7 +16,7 @@ name. Score each dimension from 1 (fails) to 5 (excellent).
 | --- | ---: | --- |
 | Detection | 25% | Directional wording is found and quoted exactly. Missed instances and invented ones both cost. |
 | Explanation | 15% | The mechanism is named — which outcome the wording protects and how — rather than the phrase being labeled "biased". |
-| Neutrality of the rewrite | 25% | The rewrite leaves every admissible outcome reachable. It does not swap one lean for the opposite. |
+| Neutrality of the rewrite | 25% | The rewrite leaves every admissible outcome reachable and gives each comparable weight, and it places evidence and criteria before the choice. It does not swap one lean for the opposite. |
 | Criteria quality | 20% | The replacement criteria are observable in the workspace: a count, a file, a test, a budget, a named condition. |
 | Fidelity | 15% | The author's settled constraints, task, and scope survive the rewrite unchanged. |
 
@@ -45,6 +45,6 @@ Release the candidate only when:
 3. Its weighted score is higher than baseline.
 4. Any published comparison uses the same cases, models, trials, and rubric.
 
-Rule 2 is the one that matters most for this skill. A candidate that finds more
-directional wording while rewriting less faithfully has not improved the prompt;
-it has moved the bias.
+Condition 2 is the one that matters most for this skill. A candidate that finds
+more directional wording while rewriting less faithfully has not improved the
+prompt; it has moved the bias.

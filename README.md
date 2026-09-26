@@ -57,7 +57,9 @@ decision — and stopping now requires overriding the prompt.
 > 4. **Record** — evidence, alternatives, action, reasoning.
 >
 > Continue when the remaining steps target a file no completed agent has
-> reported on. Stop when the last three outputs restate landed findings.
+> reported on. Consume and stop when its findings have landed and the rest
+> repeats covered ground. Stop as redundant when the report already covers its
+> whole scope. Defer when one more output would settle which applies.
 
 </td>
 </tr>
@@ -85,14 +87,18 @@ Directive wording is the correct form for a constraint.
 ## The scanner
 
 A prompt linter ships with the repo. It flags the twelve patterns catalogued in
-[`references/patterns.md`](./skills/neutral-prompt/references/patterns.md):
+[`references/patterns.md`](./skills/neutral-prompt/references/patterns.md). Here
+it is on the Before prompt above, saved as plain text in `my-prompt.md`:
 
 ```console
 $ python3 scripts/scan_prompt.py my-prompt.md
-my-prompt.md:3:1  NP001  high  'Do NOT immediately stop'
+my-prompt.md:1:1  NP012  advisory  '(whole document)'
+    why: The text delegates a lifecycle or review decision but states no criteria, so the agent falls back on tone, on its own defaults, or on whichever outcome was named first.
+    try: Name the admissible outcomes and the observable condition that selects each one.
+my-prompt.md:1:49  NP001  high      'Do NOT immediately stop'
     why: A negated stop verb protects continuation: the complement becomes the default and needs no justification.
     try: Name the decision instead: 'Evaluate each one. Continuing and stopping are both admissible outcomes.'
-1 finding(s): 1 high, 0 medium, 0 advisory
+2 finding(s): 1 high, 0 medium, 1 advisory
 ```
 
 It finds phrasings, not intent. A hit on a settled constraint is correct as
@@ -119,10 +125,11 @@ claude plugin install neutral-prompt@neutral-prompt
 Restart Claude Code, then re-invoke `/neutral-prompt`.
 
 Adding a rule to the scanner means adding an entry to `references/patterns.md`, a
-`Rule` in `scripts/scan_prompt.py`, and a labeled case in `evals/cases.jsonl` —
-`python3 scripts/run_evals.py scan` fails until all three agree. See
+`Rule` in `scripts/scan_prompt.py`, and a labeled case in `evals/cases.jsonl`. The
+unit tests fail until all three agree, and `python3 scripts/run_evals.py scan`
+fails when any case's findings differ from its label. See
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT.
+[MIT](LICENSE).

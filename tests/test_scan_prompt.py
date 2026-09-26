@@ -1,4 +1,6 @@
 import json
+import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -10,6 +12,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import scan_prompt  # noqa: E402
 
+CATALOG_PATH = ROOT / "skills" / "neutral-prompt" / "references" / "patterns.md"
+
 
 def rule_ids(text):
     return sorted({finding.rule_id for finding in scan_prompt.scan_text(text)})
@@ -19,6 +23,7 @@ RULE_SAMPLES = {
     "NP001": [
         "Do NOT immediately stop them.",
         "Avoid terminating the background jobs.",
+        "Don\u2019t stop the agents yet.",
     ],
     "NP002": [
         "Keep digging until you find the cause.",
@@ -77,6 +82,19 @@ class RuleDetectionTest(unittest.TestCase):
         declared = {rule.id for rule in scan_prompt.RULES}
         declared.add(scan_prompt.COVERAGE_RULE.id)
         self.assertEqual(set(RULE_SAMPLES), declared)
+
+
+class CatalogTest(unittest.TestCase):
+    def test_catalog_and_detector_agree_on_ids_and_titles(self):
+        headings = {}
+        for line in CATALOG_PATH.read_text(encoding="utf-8").splitlines():
+            match = re.match(r"^## (NP\d{3}) \u2014 (.+?)(?: \(advisory\))?$", line)
+            if match:
+                headings[match.group(1)] = match.group(2).lower()
+        declared = {
+            rule.id: rule.title for rule in (*scan_prompt.RULES, scan_prompt.COVERAGE_RULE)
+        }
+        self.assertEqual(headings, declared)
 
 
 class CoverageRuleTest(unittest.TestCase):
@@ -148,6 +166,12 @@ class FindingShapeTest(unittest.TestCase):
         self.assertTrue(first.why)
         self.assertTrue(first.suggestion)
 
+    def test_typographic_apostrophe_is_quoted_as_written(self):
+        findings = scan_prompt.scan_text("Please don\u2019t stop them.")
+        finding = next(f for f in findings if f.rule_id == "NP001")
+        self.assertEqual(finding.column, 8)
+        self.assertEqual(finding.text, "don\u2019t stop")
+
     def test_findings_are_position_ordered(self):
         text = "Be thorough. Do not stop it."
         positions = [(f.line, f.column) for f in scan_prompt.scan_text(text)]
@@ -170,6 +194,32 @@ class CommandLineTest(unittest.TestCase):
             text=True,
             check=False,
         )
+
+    def run_bytes(self, args, data=b""):
+        """Run with raw bytes on stdin and a cp1252 stdout, as a Windows pipe has."""
+        env = dict(os.environ, PYTHONIOENCODING="cp1252")
+        return subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "scan_prompt.py"), "--quiet", *args],
+            input=data,
+            capture_output=True,
+            check=False,
+            env=env,
+        )
+
+    def test_stdin_is_utf8_and_the_report_survives_a_cp1252_pipe(self):
+        data = "\ufeffDo not \u0432\u0440\u0435\u043c\u044f stop.\r\n".encode("utf-8")
+        result = self.run_bytes(["-"], data)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        output = result.stdout.decode("cp1252")
+        self.assertIn("-:1:1  NP001", output)
+        self.assertIn("\\u0432", output)
+
+    def test_file_byte_order_mark_is_skipped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bom.md"
+            path.write_bytes("\ufeffDo not stop them.\n".encode("utf-8"))
+            result = self.run_bytes([str(path)])
+            self.assertIn(":1:1  NP001", result.stdout.decode("cp1252"))
 
     def test_clean_input_exits_zero(self):
         result = self.run_cli(["-"], "Summarize the file in three sentences.\n")
@@ -212,6 +262,20 @@ class CommandLineTest(unittest.TestCase):
         result = self.run_cli(["definitely-not-here.md"])
         self.assertEqual(result.returncode, 2)
         self.assertIn("no such file", result.stderr)
+
+    def test_undecodable_file_exits_two(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "latin1.md"
+            path.write_bytes(b"Caf\xe9. Do not stop them.\n")
+            result = self.run_cli([str(path)])
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("not UTF-8", result.stderr)
+
+    def test_directory_exits_two(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self.run_cli([tmp])
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("cannot read", result.stderr)
 
     def test_no_arguments_exits_two(self):
         result = self.run_cli([])

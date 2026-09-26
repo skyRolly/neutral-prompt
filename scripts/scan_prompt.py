@@ -19,6 +19,12 @@ Usage:
 Suppression:
     Put `neutral-prompt: allow NP003` (or `allow all`) on the flagged line or
     on the line directly above it. Several ids may be listed, comma-separated.
+    NP012 is a whole-document check: `allow NP012` or `allow all` on any line
+    suppresses it for the whole document.
+
+Input:
+    Files and stdin are decoded as UTF-8 on every platform; a leading
+    byte-order mark is ignored. Typographic apostrophes match like ASCII ones.
 
 Exit codes:
     0  no findings at or above --fail-on
@@ -42,6 +48,10 @@ SUPPRESS_RE = re.compile(
     r"neutral-prompt:\s*allow\s+(all|NP\d{3}(?:\s*,\s*NP\d{3})*)",
     re.IGNORECASE,
 )
+
+# "Don’t stop" must be caught like "Don't stop". The swap is one character for
+# one, so reported columns stay exact.
+APOSTROPHES = str.maketrans({"\u2018": "'", "\u2019": "'"})
 
 
 @dataclass(frozen=True)
@@ -115,7 +125,7 @@ RULES: tuple[Rule, ...] = (
         title="mandatory change",
         severity="high",
         why="Converts a scoping decision into an obligation, so out-of-scope and incorrect findings get acted on too.",
-        suggestion="Open the disposition: 'For each finding: fix, defer with a tracked follow-up, or reject with counter-evidence.'",
+        suggestion="Open the disposition: 'For each finding: fix now, modify the surrounding design, preserve current behavior, reject with counter-evidence, or defer with a tracked follow-up.'",
         patterns=(
             r"\b(?:must|always|make\s+sure\s+(?:to|you|that\s+you)|be\s+sure\s+to|"
             r"ensure\s+(?:you|to|that\s+you))\s+(?:\w+\s+){0,2}?"
@@ -129,7 +139,7 @@ RULES: tuple[Rule, ...] = (
         title="forced acceptance",
         severity="high",
         why="Replaces evaluation with authorship: the agent stops checking whether a claim is true and starts checking who made it.",
-        suggestion="Evaluate on the merits: 'Verify each suggestion against the code and the requirements; accept, reject with counter-evidence, or defer.'",
+        suggestion="Evaluate on the merits: 'Verify each suggestion against the code and the requirements; accept, accept with modification, reject with counter-evidence, or defer.'",
         patterns=(
             r"\b(?:always|must)\s+(?:accept|approve|apply|follow|implement)\b",
             r"\b(?:do\s+not|don'?t|never)\s+(?:\w+\s+){0,2}?"
@@ -296,13 +306,14 @@ def scan_text(text: str, path: str = "-") -> list[Finding]:
     findings: list[Finding] = []
 
     for index, line in enumerate(lines):
+        searchable = line.translate(APOSTROPHES)
         active = set(suppressions[index])
         if index > 0:
             active |= suppressions[index - 1]
         for rule in RULES:
             if "all" in active or rule.id in active:
                 continue
-            for match in rule.regex.finditer(line):
+            for match in rule.regex.finditer(searchable):
                 findings.append(
                     Finding(
                         path=path,
@@ -310,7 +321,7 @@ def scan_text(text: str, path: str = "-") -> list[Finding]:
                         column=match.start() + 1,
                         rule_id=rule.id,
                         severity=rule.severity,
-                        text=match.group(0).strip(),
+                        text=line[match.start() : match.end()].strip(),
                         why=rule.why,
                         suggestion=rule.suggestion,
                     )
@@ -339,11 +350,9 @@ def scan_text(text: str, path: str = "-") -> list[Finding]:
 def read_source(name: str) -> tuple[str, str]:
     """Return (path label, text) for one input, reading stdin for '-'."""
     if name == "-":
-        return "-", sys.stdin.read()
+        return "-", sys.stdin.buffer.read().decode("utf-8-sig")
     path = Path(name)
-    if not path.is_file():
-        raise FileNotFoundError(name)
-    return str(path), path.read_text(encoding="utf-8")
+    return str(path), path.read_text(encoding="utf-8-sig")
 
 
 def format_text_report(findings: list[Finding], show_detail: bool) -> str:
@@ -409,6 +418,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        # Windows pipes encode with the ANSI code page; quoted prompt text outside
+        # it must not turn a report into a traceback.
+        sys.stdout.reconfigure(errors="backslashreplace")
 
     if args.list_rules:
         print(list_rules())
@@ -425,6 +438,9 @@ def main(argv: list[str] | None = None) -> int:
             path, text = read_source(name)
         except FileNotFoundError:
             print(f"scan_prompt.py: no such file: {name}", file=sys.stderr)
+            return 2
+        except UnicodeDecodeError as error:
+            print(f"scan_prompt.py: {name} is not UTF-8 text: {error}", file=sys.stderr)
             return 2
         except OSError as error:
             print(f"scan_prompt.py: cannot read {name}: {error}", file=sys.stderr)

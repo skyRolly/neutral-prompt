@@ -33,8 +33,8 @@ One JSON object per line:
 
 | Field | Meaning |
 | --- | --- |
-| `id` | Unique, kebab-case, prefixed with its category. |
-| `category` | `lifecycle`, `review`, `investigation`, `accept-reject`, or `general`. |
+| `id` | Unique, kebab-case, prefixed with its category (`accept-` for `accept-reject`). |
+| `category` | `lifecycle`, `review`, `investigation`, `accept-reject`, or `general`. `validate` rejects any other value. |
 | `kind` | `directional` — the text is biased. `neutral` — the text is correct as written. |
 | `text` | The prompt fragment handed to the scanner, verbatim. |
 | `expect` | The exact set of rule ids the scanner must report. |
@@ -50,10 +50,10 @@ Measured with the shipped case file on Python 3.11:
 
 | | |
 |---|---|
-| Cases | 26 (18 directional, 8 neutral) |
-| Categories | lifecycle 6, review 8, investigation 5, accept-reject 4, general 3 |
+| Cases | 27 (19 directional, 8 neutral) |
+| Categories | lifecycle 7, review 8, investigation 5, accept-reject 4, general 3 |
 | Rules with at least one labeled case | 12 of 12 |
-| Cases matching their label | 26 of 26 |
+| Cases matching their label | 27 of 27 |
 | Known scanner limitations | 2 |
 
 The two known limitations are both cases where the phrase is a settled constraint
@@ -95,9 +95,26 @@ Keep the comparison honest:
   so an unpinned run silently uses whatever the operator or the CLI release
   defaults to. The pinned model is part of the result.
 - **Blind the grader.** Relabel conditions before grading and permute the label
-  order, so position carries no signal.
+  order, so position carries no signal. Send the grader only the text between the
+  `<!-- judge:begin -->` and `<!-- judge:end -->` markers in `rubric.md`; the
+  release gate below them names the conditions.
 - **Hold the cases fixed.** Do not compare conditions produced with different
   cases, models, trial counts, or rubrics.
 
+The rubric grades one review and rewrite, so it does not test the Persistence
+section of `SKILL.md`: that the rules still apply after the topic changes, and
+that "stop neutral mode" or "normal mode" turns them off with a one-line
+confirmation. Testing that takes one resumed conversation in which the skill is
+supplied with the first turn, followed by at least one turn on an unrelated
+topic, then a review-and-rewrite task, then the off-switch. Grade that rewrite
+with the rubric against the same task given as the first turn of a fresh
+candidate session, so the task is held fixed, and send the grader only the two
+rewrites, not the transcripts. Then check that the reply to the off-switch is
+one line. No scenario of that shape ships here; capturing one needs the model
+runner this repository does not ship.
+
 Record the runner, the CLI version, the model, the case count, the trial count,
-the rubric revision, and the reported cost alongside any numbers you publish.
+the rubric revision, and the reported token usage and cost alongside any numbers
+you publish. A candidate call carries the skill text that a baseline call does
+not, so the input-token difference is part of the result. Keep raw runs under
+`evals/results/`, which is git-ignored.

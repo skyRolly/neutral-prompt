@@ -12,6 +12,7 @@ SKILL_NAME = "neutral-prompt"
 SKILL_DIR = ROOT / "skills" / SKILL_NAME
 SKILL_PATH = SKILL_DIR / "SKILL.md"
 MIRROR_PATH = ROOT / ".cursor" / "skills" / SKILL_NAME / "SKILL.md"
+INSTALL_PATH = ROOT / "INSTALL.md"
 
 VERSIONED_MANIFESTS = (
     ".claude-plugin/plugin.json",
@@ -30,6 +31,11 @@ PLACEHOLDER_RE = re.compile(
 )
 SKILL_PATH_RE = re.compile(r"skills/([\w.-]+)/SKILL\.md")
 TEXT_SUFFIXES = {".md", ".json", ".yaml", ".yml", ".toml", ".py", ".mjs", ".jsonl"}
+RULE_HEADING_RE = re.compile(r"^### (\d+)\. (.+)$", re.M)
+NUMBERED_RE = re.compile(r"^(\d+)\. ", re.M)
+SNIPPET_RE = re.compile(r"```markdown\n(## Prompt framing\n.*?)```", re.S)
+COPY_SKILL_RE = re.compile(r"^cp -R neutral-prompt/skills/neutral-prompt (\S+)/$", re.M)
+SESSION_SOURCES = {"startup", "resume", "clear", "compact", "fork"}
 
 
 def tracked_files():
@@ -45,6 +51,19 @@ def tracked_files():
 
 def tracked_text_files():
     return [path for path in tracked_files() if path.suffix in TEXT_SUFFIXES]
+
+
+def install_section(runtime):
+    """The body of the INSTALL.md <details> block whose summary names the runtime."""
+    text = INSTALL_PATH.read_text(encoding="utf-8")
+    marker = f"<summary><strong>{runtime}</strong></summary>"
+    start = text.index(marker) + len(marker)
+    return text[start : text.index("</details>", start)]
+
+
+def hook_entry():
+    declaration = json.loads((ROOT / "hooks" / "hooks.json").read_text(encoding="utf-8"))
+    return declaration["hooks"]["SessionStart"][0]
 
 
 def frontmatter(text):
@@ -113,6 +132,59 @@ class MirrorTest(unittest.TestCase):
         self.assertFalse(MIRROR_PATH.is_symlink())
 
 
+class RuleListTest(unittest.TestCase):
+    """Every copy of the rule list stays in step with the canonical SKILL.md."""
+
+    def setUp(self):
+        self.rules = RULE_HEADING_RE.findall(SKILL_PATH.read_text(encoding="utf-8"))
+        self.numbers = [number for number, _ in self.rules]
+
+    def test_readme_lists_the_skill_rules_verbatim(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        section = readme.split("## The rules", 1)[1].split("\n## ", 1)[0]
+        self.assertEqual(re.findall(r"^(\d+)\. (.+?)\.?$", section, re.M), self.rules)
+
+    def test_install_snippets_match_each_other_and_number_every_rule(self):
+        snippets = SNIPPET_RE.findall(INSTALL_PATH.read_text(encoding="utf-8"))
+        self.assertGreaterEqual(len(snippets), 5)
+        self.assertEqual(len(set(snippets)), 1, "the always-on snippets in INSTALL.md differ")
+        self.assertEqual(NUMBERED_RE.findall(snippets[0]), self.numbers)
+
+    def test_gemini_command_numbers_every_rule(self):
+        toml = (SKILL_DIR / "agents" / "gemini.toml").read_text(encoding="utf-8")
+        self.assertEqual(NUMBERED_RE.findall(toml), self.numbers)
+
+
+class InstallDocsTest(unittest.TestCase):
+    def test_zed_route_copies_into_the_directory_zed_scans(self):
+        # Zed loads skills from ~/.agents/skills/ and <worktree>/.agents/skills/ only
+        # (https://zed.dev/docs/ai/skills). ~/.config/zed/ holds its AGENTS.md, not
+        # its skills, so the two paths in the Zed section share no prefix.
+        section = install_section("Zed")
+        self.assertNotIn("~/.config/zed/skills", section)
+        self.assertIn(
+            "mkdir -p ~/.agents/skills\n"
+            "cp -R neutral-prompt/skills/neutral-prompt ~/.agents/skills/",
+            section,
+        )
+        self.assertIn("~/.agents/skills/neutral-prompt", section)
+
+    def test_every_copied_skill_directory_is_created_first(self):
+        # `cp -R <skill> <dir>/` into a missing <dir> either fails or copies the
+        # skill's contents to <dir> itself, so each block must `mkdir -p` it.
+        text = INSTALL_PATH.read_text(encoding="utf-8")
+        for block in re.findall(r"```bash\n(.*?)```", text, re.S):
+            for copy in COPY_SKILL_RE.finditer(block):
+                destination = copy.group(1)
+                with self.subTest(destination=destination):
+                    self.assertRegex(
+                        block[: copy.start()],
+                        re.compile(
+                            rf"^mkdir -p (?:.* )?{re.escape(destination)}/?(?:\s|$)", re.M
+                        ),
+                    )
+
+
 class ManifestTest(unittest.TestCase):
     def load(self, relative):
         return json.loads((ROOT / relative).read_text(encoding="utf-8"))
@@ -151,6 +223,17 @@ class ReferenceTest(unittest.TestCase):
             with self.subTest(reference=path.name):
                 self.assertIn(f"references/{path.name}", text)
 
+    def test_rule_8_example_matches_its_catalog_entry(self):
+        # SKILL.md rule 8's Good example and patterns.md NP010's Neutral example are
+        # one text; a fix to one must reach the other.
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        rule_8 = skill.split("### 8. ", 1)[1].split("\n### ", 1)[0]
+        good = re.search(r'^Good: "(.+)"$', rule_8, re.M).group(1)
+        catalog = (SKILL_DIR / "references" / "patterns.md").read_text(encoding="utf-8")
+        np010 = catalog.split("## NP010 ", 1)[1].split("\n---", 1)[0]
+        neutral = re.search(r'\*\*Neutral:\*\* "(.+?)"', np010, re.S).group(1)
+        self.assertEqual(" ".join(neutral.split()), good)
+
     def test_every_skill_path_mentioned_anywhere_exists(self):
         for path in tracked_text_files():
             for slug in set(SKILL_PATH_RE.findall(path.read_text(encoding="utf-8"))):
@@ -185,7 +268,7 @@ class AlwaysOnHookTest(unittest.TestCase):
             self.skipTest("node is not installed")
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        # A path with a space catches quoting mistakes in the hook declaration.
+        # A path with a space catches quoting mistakes in the declared command.
         self.plugin_root = Path(self.temp.name) / "plugin root"
         shutil.copytree(ROOT / "hooks", self.plugin_root / "hooks")
         shutil.copytree(ROOT / "skills", self.plugin_root / "skills")
@@ -198,7 +281,7 @@ class AlwaysOnHookTest(unittest.TestCase):
         return subprocess.run(
             [self.node, str(self.plugin_root / "hooks" / "always-on.mjs")],
             capture_output=True,
-            text=True,
+            encoding="utf-8",
             check=False,
             env=env,
         )
@@ -229,6 +312,11 @@ class AlwaysOnHookTest(unittest.TestCase):
         self.assertIn("stop neutral mode", result.stdout)
         self.assertIn(str(self.config_dir / ".neutral-prompt-always"), result.stdout)
 
+    def test_says_where_the_reference_files_live(self):
+        self.set_flag()
+        result = self.run_hook()
+        self.assertIn("references/ paths below are relative to", result.stdout)
+
     def test_exits_zero_when_the_skill_is_missing(self):
         self.set_flag()
         shutil.rmtree(self.plugin_root / "skills")
@@ -237,10 +325,30 @@ class AlwaysOnHookTest(unittest.TestCase):
         self.assertEqual(result.stdout, "")
 
     def test_hook_declaration_points_at_the_shipped_script(self):
-        declaration = json.loads((ROOT / "hooks" / "hooks.json").read_text())
-        entries = declaration["hooks"]["SessionStart"]
-        commands = [hook["command"] for entry in entries for hook in entry["hooks"]]
+        commands = [hook["command"] for hook in hook_entry()["hooks"]]
         self.assertTrue(any("always-on.mjs" in command for command in commands))
+
+    def test_hook_fires_on_every_session_source(self):
+        # https://code.claude.com/docs/en/hooks lists these SessionStart sources.
+        self.assertEqual(set(hook_entry()["matcher"].split("|")), SESSION_SOURCES)
+
+    def test_declared_command_loads_the_hook_from_a_spaced_plugin_root(self):
+        shell = shutil.which("sh")
+        if os.name == "nt" or not shell:
+            self.skipTest("needs a POSIX sh; Claude Code uses Git Bash or PowerShell on Windows")
+        self.set_flag()
+        env = os.environ.copy()
+        env["CLAUDE_CONFIG_DIR"] = str(self.config_dir)
+        env["CLAUDE_PLUGIN_ROOT"] = str(self.plugin_root)
+        result = subprocess.run(
+            [shell, "-c", hook_entry()["hooks"][0]["command"]],
+            capture_output=True,
+            encoding="utf-8",
+            check=False,
+            env=env,
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("NEUTRAL PROMPT MODE ACTIVE", result.stdout)
 
 
 if __name__ == "__main__":

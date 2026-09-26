@@ -73,8 +73,9 @@ address`, `every finding must be resolved`.
 obligation, so out-of-scope and incorrect findings get "fixed" too.
 
 **Bad:** "Make sure to fix every issue the reviewer raised."
-**Neutral:** "For each issue: fix it, defer it with a tracked follow-up, or reject
-it with the counter-evidence."
+**Neutral:** "For each issue: fix it now, modify the surrounding design instead,
+preserve the current behavior, reject it with the counter-evidence, or defer it
+with a tracked follow-up."
 
 ---
 
@@ -88,8 +89,8 @@ The agent stops checking whether a claim is true and starts checking who made it
 
 **Bad:** "Never reject a reviewer's suggestion."
 **Neutral:** "Verify each suggestion against the code and the requirements.
-Accept it, reject it with the counter-evidence, or defer it. Authorship carries
-no weight."
+Accept it, accept it with a modification you specify, reject it with the
+counter-evidence, or defer it. Authorship carries no weight."
 
 ---
 
@@ -163,9 +164,12 @@ to whatever the surrounding wording already implied. Vagueness does not stay
 neutral; it inherits the nearest lean.
 
 **Bad:** "Stop the sub-agent when it is no longer providing significant value."
-**Neutral:** "Stop the sub-agent when its last three outputs restate findings
-already in the report, or when its remaining steps target files another agent has
-already covered."
+**Neutral:** "Stop the sub-agent when it has produced at least three outputs and
+each of the last three restates a finding already in the report, or when every
+file its remaining steps target is already covered by another agent. Continue it
+when at least one of its remaining steps targets a file no other agent has
+covered and either it has produced fewer than three outputs or at least one of
+its last three outputs is not a restatement of a finding already in the report."
 
 ---
 
@@ -195,10 +199,13 @@ prompt mentioned first.
 
 **Bad:** "Look at the running agents and decide what to do with each."
 **Neutral:** "For each running agent, decide: continue, consume results and stop,
-stop as redundant, or defer. Continue when <condition>; stop when <condition>."
+stop as redundant, or defer. Continue when <condition>; consume and stop when
+<condition>; stop as redundant when <condition>; defer when <condition>."
 
 This one is advisory. It fires on absence, so it has a higher false-positive rate
 than the rest — a short prompt with an obvious criterion can be fine as written.
+Because it is a whole-document check, `neutral-prompt: allow NP012` (or
+`allow all`) on any line suppresses it for the whole document.
 
 ---
 

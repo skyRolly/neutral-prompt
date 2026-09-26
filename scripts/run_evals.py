@@ -36,12 +36,11 @@ CASES_PATH = ROOT / "evals" / "cases.jsonl"
 KNOWN_RULE_IDS = set(RULES_BY_ID) | {COVERAGE_RULE.id}
 REQUIRED_FIELDS = ("id", "category", "kind", "text", "expect", "note")
 VALID_KINDS = ("directional", "neutral")
+VALID_CATEGORIES = ("lifecycle", "review", "investigation", "accept-reject", "general")
 
 
 def load_cases(path: Path) -> list[dict]:
     """Parse cases.jsonl, one JSON object per non-empty line."""
-    if not path.is_file():
-        raise FileNotFoundError(path)
     cases: list[dict] = []
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         stripped = line.strip()
@@ -73,6 +72,9 @@ def validate_cases(cases: list[dict]) -> list[str]:
 
         if case["kind"] not in VALID_KINDS:
             problems.append(f"{label}: kind must be one of {VALID_KINDS}")
+
+        if case["category"] not in VALID_CATEGORIES:
+            problems.append(f"{label}: category must be one of {VALID_CATEGORIES}")
 
         if not isinstance(case["text"], str) or not case["text"].strip():
             problems.append(f"{label}: text must be a non-empty string")
@@ -189,6 +191,9 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as error:
         print(f"run_evals.py: {error}", file=sys.stderr)
         return 1
+    except OSError as error:
+        print(f"run_evals.py: cannot read {args.cases}: {error}", file=sys.stderr)
+        return 2
 
     problems = validate_cases(cases)
     if problems:
