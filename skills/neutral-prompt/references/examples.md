@@ -30,7 +30,7 @@ never asks for.
 | "Do NOT immediately stop them." | NP001 | Negation protects continuation; the decision becomes an action constraint. |
 | "immediately" | NP001 | Reads as "not yet", which is still a lean, and leaves the criterion unwritten. |
 | "Check what they are doing first." | NP012 | Names an inspection with no criteria and no outcome list, so the inspection cannot change anything. |
-| (absent) | Outcomes | Consume-and-stop and defer are admissible and unnamed. |
+| (absent) | Rule 3 | Consume-and-stop and defer are admissible and unnamed. |
 
 ### After
 
@@ -87,7 +87,7 @@ comment gets "fixed" anyway.
 | --- | --- | --- |
 | "Do not make unnecessary changes" | NP003 | "Unnecessary" is decided after the fact, so it applies in advance to everything. |
 | "make sure you fix anything the reviewer flagged" | NP004, NP005 | Converts a scoping decision into an obligation and replaces evaluation with authorship. |
-| (absent) | Outcomes | Reject-with-reasoning and defer are admissible and unnamed. |
+| (absent) | Rule 3 | Reject-with-reasoning and defer are admissible and unnamed. |
 
 ### After
 
@@ -136,8 +136,8 @@ honest outcome: "the evidence available does not identify a root cause."
 | Quoted text | Rule | Why it biases |
 | --- | --- | --- |
 | "thoroughly", "Be exhaustive", "check everything" | NP009 | Prices further work at zero; more always wins the comparison. |
-| "Don't stop until you find the root cause" | NP002 | Makes stopping conditional on an outcome that may not be reachable. |
-| (absent) | Outcomes | Stop-and-report and defer-pending-input are admissible and unnamed. |
+| "Don't stop until you find the root cause" | NP001, NP002 | A negated stop protects continuation, and stopping becomes conditional on an outcome that may not be reachable. |
+| (absent) | Rule 3 | Stop-and-report and defer-pending-input are admissible and unnamed. |
 
 ### After
 
@@ -181,7 +181,7 @@ proposal.
 
 | Quoted text | Rule | Why it biases |
 | --- | --- | --- |
-| "Confirm that this is the right approach" | NP005 | Presupposes the conclusion; the evaluation has no way to fail. |
+| "Confirm that this is the right approach" | NP011 | Presupposes the conclusion; the evaluation has no way to fail. |
 | "explain why it will work" | NP011 | A required conclusion — one outcome is reportable. |
 | "The architect proposed" | NP005 | Authorship offered as evidence. |
 
@@ -213,9 +213,10 @@ proposal.
 
 Not every decision needs six sections. This one is already neutral:
 
-> The lint job is red. Fix it, or explain why the failure is not this branch's to
-> fix.
+> The lint job is red. Say whether the failure is this branch's: fix it if so,
+> report its cause if not.
 
-Two outcomes, both named, comparable weight, and an observable criterion implied
-by "not this branch's". Adding an evidence phase and a record section would bury
-the task. Symmetry is the requirement; length is not.
+Two outcomes, both named, each with its own deliverable, and an observable
+criterion: whether this branch's changes caused the failure. Adding an evidence
+phase and a record section would bury the task. Symmetry is the requirement;
+length is not.

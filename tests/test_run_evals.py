@@ -91,6 +91,10 @@ class ValidationTest(unittest.TestCase):
         problems = self.problems_for(kind="biased")
         self.assertTrue(any("kind must be" in problem for problem in problems))
 
+    def test_bad_category(self):
+        problems = self.problems_for(category="lifecyle")
+        self.assertTrue(any("category must be" in problem for problem in problems))
+
     def test_directional_case_needs_an_expectation(self):
         problems = self.problems_for(expect=[])
         self.assertTrue(any("at least one rule" in problem for problem in problems))
@@ -172,6 +176,12 @@ class CommandLineTest(unittest.TestCase):
             result = self.run_cli(["validate", "--cases", str(path)])
             self.assertEqual(result.returncode, 1)
             self.assertIn("unknown rule id", result.stderr)
+
+    def test_directory_exits_two(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self.run_cli(["validate", "--cases", tmp])
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("cannot read", result.stderr)
 
     def test_missing_case_file_exits_two(self):
         result = self.run_cli(["validate", "--cases", "nope.jsonl"])

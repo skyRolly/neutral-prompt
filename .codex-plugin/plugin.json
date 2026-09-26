@@ -1,6 +1,6 @@
 {
   "name": "neutral-prompt",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Neutral decision framing for Codex prompts: name every admissible outcome, state observable criteria, and require a decision record.",
   "author": {
     "name": "skyRolly",
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Neutral Prompts",
     "shortDescription": "Prompts that frame a decision instead of pre-answering it",
-    "longDescription": "Rewrite prompts so that wording stops carrying the answer: separate settled constraints from open decisions, name every admissible outcome, replace protected actions with observable criteria, and ask for the reasoning record rather than a particular conclusion.",
+    "longDescription": "Rewrite prompts so that wording stops carrying the answer: separate settled constraints from open decisions, name every admissible outcome, replace protected actions with observable criteria, and ask for the decision record rather than a particular conclusion.",
     "developerName": "skyRolly",
     "category": "Productivity",
     "capabilities": [

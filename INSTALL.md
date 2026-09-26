@@ -22,6 +22,7 @@ claude plugin list
 
 ```bash
 claude plugin marketplace update neutral-prompt
+claude plugin update neutral-prompt@neutral-prompt
 ```
 
 ### Uninstall
@@ -107,19 +108,21 @@ safety rules, output contracts, budgets, or coding standards.
 
 1. Separate settled constraints from open decisions; write constraints as imperatives.
 2. Name the decision, not the answer.
-3. List every admissible outcome: proceed, stop, modify, preserve, accept, reject, defer.
+3. List every admissible outcome, drawn from: proceed, stop, modify, preserve, accept, reject, defer.
 4. Balance the negations — ruling out one default installs its opposite.
 5. Replace protected actions ("do not stop", "avoid changing", "always fix") with the criterion they were hiding.
 6. Order the prompt: gather evidence, evaluate alternatives, choose an action, record the reasoning.
 7. Keep the intensity symmetric across outcomes; "must continue" against "may stop" is a ranking.
-8. Make thresholds observable — replace "enough", "sufficient", "significant", "as needed", "premature".
+8. Make thresholds observable — replace "enough", "sufficient", "significant", "reasonable", "as needed", "premature".
 9. Require the decision record, not a particular decision.
 10. Do not manufacture balance: state the evidence you hold, withhold only the conclusion.
 
-Directive wording is correct when the author has already decided, when safety or
-legality is at stake, when an external contract dictates the outcome, when an
-outcome is genuinely inadmissible and named as such, or when the decision is small
-enough that one balanced sentence carries the whole frame.
+Directive wording is correct when the author has already decided, when safety,
+legality, or destructiveness is at stake, when an external contract dictates the
+outcome, when an outcome is genuinely inadmissible and named as such, or when the
+text quotes a biased form in order to diagnose it. A decision with two obvious
+outcomes and one obvious criterion gets one balanced sentence instead of the full
+frame.
 ```
 
 </details>
@@ -140,7 +143,8 @@ curl -fsSL https://raw.githubusercontent.com/skyRolly/neutral-prompt/main/skills
   -o ~/.gemini/commands/neutral-prompt.toml
 ```
 
-Start a new session, type `/neutral-prompt`. It stays on for that session.
+Start a new session, type `/neutral-prompt`. It stays on for that session; "stop
+neutral mode" or "normal mode" turns it off.
 
 ### Install (extension, always-on)
 
@@ -181,7 +185,8 @@ rm ~/.gemini/commands/neutral-prompt.toml     # command route
 
 Copilot reads Agent Skills natively: the same `SKILL.md`, no conversion. It scans
 `.github/skills/`, `.claude/skills/`, and `.agents/skills/` in the project, and
-`~/.copilot/skills/`, `~/.claude/skills/`, and `~/.agents/skills/` globally.
+`~/.copilot/skills/` and `~/.agents/skills/` globally (Copilot in VS Code also
+reads `~/.claude/skills/`).
 
 ### Install
 
@@ -200,7 +205,8 @@ cp -R neutral-prompt/skills/neutral-prompt ~/.copilot/skills/
 
 ### Verify
 
-Type `/` in the chat input and confirm `neutral-prompt` appears. Or:
+In VS Code, type `/` in the chat input and confirm `neutral-prompt` appears. In
+Copilot CLI, run `/skills list`. Or:
 
 ```bash
 npx skills list
@@ -211,6 +217,7 @@ npx skills ls -g    # if installed globally
 
 ```bash
 npx skills update neutral-prompt
+npx skills update neutral-prompt -g    # if installed globally
 ```
 
 Or re-copy the folder after `git pull`.
@@ -219,6 +226,7 @@ Or re-copy the folder after `git pull`.
 
 ```bash
 npx skills remove neutral-prompt
+npx skills remove neutral-prompt -g    # if installed globally
 ```
 
 ### Always-on (optional)
@@ -234,19 +242,21 @@ safety rules, output contracts, budgets, or coding standards.
 
 1. Separate settled constraints from open decisions; write constraints as imperatives.
 2. Name the decision, not the answer.
-3. List every admissible outcome: proceed, stop, modify, preserve, accept, reject, defer.
+3. List every admissible outcome, drawn from: proceed, stop, modify, preserve, accept, reject, defer.
 4. Balance the negations — ruling out one default installs its opposite.
 5. Replace protected actions ("do not stop", "avoid changing", "always fix") with the criterion they were hiding.
 6. Order the prompt: gather evidence, evaluate alternatives, choose an action, record the reasoning.
 7. Keep the intensity symmetric across outcomes; "must continue" against "may stop" is a ranking.
-8. Make thresholds observable — replace "enough", "sufficient", "significant", "as needed", "premature".
+8. Make thresholds observable — replace "enough", "sufficient", "significant", "reasonable", "as needed", "premature".
 9. Require the decision record, not a particular decision.
 10. Do not manufacture balance: state the evidence you hold, withhold only the conclusion.
 
-Directive wording is correct when the author has already decided, when safety or
-legality is at stake, when an external contract dictates the outcome, when an
-outcome is genuinely inadmissible and named as such, or when the decision is small
-enough that one balanced sentence carries the whole frame.
+Directive wording is correct when the author has already decided, when safety,
+legality, or destructiveness is at stake, when an external contract dictates the
+outcome, when an outcome is genuinely inadmissible and named as such, or when the
+text quotes a biased form in order to diagnose it. A decision with two obvious
+outcomes and one obvious criterion gets one balanced sentence instead of the full
+frame.
 ```
 
 </details>
@@ -262,33 +272,43 @@ Start a Kimi Code session, then:
 2. Choose **Custom**.
 3. Paste `https://github.com/skyRolly/neutral-prompt` and press `Enter`.
 4. Choose **Trust and install**.
+5. Run `/reload` or start a new session; the current session does not pick up a
+   new plugin until then.
 
 Use the slash command `/skill:neutral-prompt` to invoke the skill explicitly.
 
 ### Update
 
-`/plugins` in a Kimi Code session, cursor to **Neutral Prompts**, press `R`.
+`/plugins` in a Kimi Code session, open the **Installed** tab, cursor to **Neutral
+Prompts**, and press `Enter`; it updates when a newer version is available (`R`
+only reloads the installed manifests). Then run `/reload` or start a new session.
 
 ### Uninstall
 
-`/plugins` in a Kimi Code session, cursor to **Neutral Prompts**, press `D`.
+`/plugins` in a Kimi Code session, cursor to **Neutral Prompts**, press `D`, then
+run `/reload` or start a new session.
 
 </details>
 
 <details>
 <summary><strong>OpenCode</strong></summary>
 
-OpenCode reads `skills/` natively, so the skill works from any directory OpenCode
-scans. The repository also ships `.opencode/command/neutral-prompt.md`, which adds
-a `/neutral-prompt` command to a project that has it.
+OpenCode reads Agent Skills natively: the same `SKILL.md`, no conversion. It scans
+`.opencode/skills/`, `.claude/skills/`, and `.agents/skills/` in the project, and
+`~/.config/opencode/skills/`, `~/.claude/skills/`, and `~/.agents/skills/`
+globally. The repository also ships `.opencode/command/neutral-prompt.md`, which
+adds a `/neutral-prompt` command to a project that has it. The command tells the
+agent to use the skill, so install the skill as well.
 
 ### Install
 
 ```bash
-npx skills add skyRolly/neutral-prompt -a opencode -y
+npx skills add skyRolly/neutral-prompt -a opencode -y       # this project: .agents/skills/
+npx skills add skyRolly/neutral-prompt -a opencode -g -y    # all projects: ~/.config/opencode/skills/
 ```
 
-Or copy both pieces by hand:
+The CLI installs the skill only. To add the `/neutral-prompt` command file as
+well, or to install without the CLI, copy both pieces by hand:
 
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
@@ -299,20 +319,30 @@ cp neutral-prompt/.opencode/command/neutral-prompt.md ~/.config/opencode/command
 
 ### Verify
 
-Start OpenCode, type `/`, and confirm `neutral-prompt` appears.
+Start OpenCode and ask the agent to load the `neutral-prompt` skill. OpenCode hands
+installed skills to the agent through its `skill` tool, so a successful load is
+the check. If you also copied the command file, type `/` and confirm
+`neutral-prompt` is listed. The `/` list shows command files and omits skills, so
+this second check does not apply to the CLI route.
 
 ### Update
 
 ```bash
 npx skills update neutral-prompt
+npx skills update neutral-prompt -g    # if installed globally
 ```
 
 Or re-copy after `git pull`.
 
 ### Uninstall
 
-Delete `neutral-prompt` from the skills directory it landed in, and remove
-`command/neutral-prompt.md`.
+```bash
+npx skills remove neutral-prompt        # CLI route
+npx skills remove neutral-prompt -g     # CLI route, if installed globally
+```
+
+For the manual route, delete `~/.config/opencode/skills/neutral-prompt` and
+`~/.config/opencode/command/neutral-prompt.md`.
 
 ### Always-on (optional)
 
@@ -327,19 +357,21 @@ safety rules, output contracts, budgets, or coding standards.
 
 1. Separate settled constraints from open decisions; write constraints as imperatives.
 2. Name the decision, not the answer.
-3. List every admissible outcome: proceed, stop, modify, preserve, accept, reject, defer.
+3. List every admissible outcome, drawn from: proceed, stop, modify, preserve, accept, reject, defer.
 4. Balance the negations — ruling out one default installs its opposite.
 5. Replace protected actions ("do not stop", "avoid changing", "always fix") with the criterion they were hiding.
 6. Order the prompt: gather evidence, evaluate alternatives, choose an action, record the reasoning.
 7. Keep the intensity symmetric across outcomes; "must continue" against "may stop" is a ranking.
-8. Make thresholds observable — replace "enough", "sufficient", "significant", "as needed", "premature".
+8. Make thresholds observable — replace "enough", "sufficient", "significant", "reasonable", "as needed", "premature".
 9. Require the decision record, not a particular decision.
 10. Do not manufacture balance: state the evidence you hold, withhold only the conclusion.
 
-Directive wording is correct when the author has already decided, when safety or
-legality is at stake, when an external contract dictates the outcome, when an
-outcome is genuinely inadmissible and named as such, or when the decision is small
-enough that one balanced sentence carries the whole frame.
+Directive wording is correct when the author has already decided, when safety,
+legality, or destructiveness is at stake, when an external contract dictates the
+outcome, when an outcome is genuinely inadmissible and named as such, or when the
+text quotes a biased form in order to diagnose it. A decision with two obvious
+outcomes and one obvious criterion gets one balanced sentence instead of the full
+frame.
 ```
 
 </details>
@@ -356,8 +388,9 @@ qwen extensions install skyRolly/neutral-prompt
 Qwen Code supports the GitHub shorthand and installs the repository as a native
 extension. The extension discovers the skill under `skills/`.
 
-Type `/neutral-prompt` to invoke the skill explicitly. Installing the extension
-does not change behavior until the skill is invoked.
+Type `/neutral-prompt:neutral-prompt` to invoke the skill explicitly; Qwen Code
+registers an extension's skills as `<extension>:<skill>`. Installing the
+extension does not change behavior until the skill is invoked.
 
 ### Verify
 
@@ -371,7 +404,7 @@ Then start a new Qwen Code session and run:
 /skills
 ```
 
-Confirm that `neutral-prompt` appears in the list.
+Confirm that `neutral-prompt:neutral-prompt` appears in the list.
 
 ### Update
 
@@ -394,8 +427,7 @@ Zed's Agent reads Agent Skills natively: the same `SKILL.md`, no conversion.
 
 ### Install
 
-In the Agent Panel, open the Skills manager and choose **Create skill from URL**
-(also in the command palette as `agent: create skill from url`), then paste:
+Open the command palette, run `agent: create skill from url`, and paste:
 
 ```
 https://github.com/skyRolly/neutral-prompt/blob/main/skills/neutral-prompt/SKILL.md
@@ -404,12 +436,17 @@ https://github.com/skyRolly/neutral-prompt/blob/main/skills/neutral-prompt/SKILL
 Save it in **User** scope for every project, or **Project** scope for one. Then
 type `/neutral-prompt` in the Agent Panel.
 
-Prefer the filesystem? Clone the repo and drop the skill folder into your user
-skills directory:
+URL import brings `SKILL.md` alone. The reference files it links to
+(`references/patterns.md`, `references/examples.md`, `references/decision-record.md`)
+come only with the folder copy below.
+
+Prefer the filesystem? Clone the repo and copy the skill folder into
+`~/.agents/skills/`, the global directory Zed scans:
 
 ```bash
 git clone https://github.com/skyRolly/neutral-prompt
-cp -R neutral-prompt/skills/neutral-prompt ~/.config/zed/skills/
+mkdir -p ~/.agents/skills
+cp -R neutral-prompt/skills/neutral-prompt ~/.agents/skills/
 ```
 
 ### Verify
@@ -419,12 +456,13 @@ listed. Or type `/` and confirm it appears.
 
 ### Update
 
-Re-import from the same URL (overwrites), or re-copy the folder after `git pull`.
+Delete `neutral-prompt` in the Skills manager and import it again from the same
+URL, or re-copy the folder after `git pull`.
 
 ### Uninstall
 
 Remove `neutral-prompt` from the Skills manager, or delete
-`~/.config/zed/skills/neutral-prompt`.
+`~/.agents/skills/neutral-prompt`.
 
 ### Always-on (optional)
 
@@ -439,19 +477,21 @@ safety rules, output contracts, budgets, or coding standards.
 
 1. Separate settled constraints from open decisions; write constraints as imperatives.
 2. Name the decision, not the answer.
-3. List every admissible outcome: proceed, stop, modify, preserve, accept, reject, defer.
+3. List every admissible outcome, drawn from: proceed, stop, modify, preserve, accept, reject, defer.
 4. Balance the negations — ruling out one default installs its opposite.
 5. Replace protected actions ("do not stop", "avoid changing", "always fix") with the criterion they were hiding.
 6. Order the prompt: gather evidence, evaluate alternatives, choose an action, record the reasoning.
 7. Keep the intensity symmetric across outcomes; "must continue" against "may stop" is a ranking.
-8. Make thresholds observable — replace "enough", "sufficient", "significant", "as needed", "premature".
+8. Make thresholds observable — replace "enough", "sufficient", "significant", "reasonable", "as needed", "premature".
 9. Require the decision record, not a particular decision.
 10. Do not manufacture balance: state the evidence you hold, withhold only the conclusion.
 
-Directive wording is correct when the author has already decided, when safety or
-legality is at stake, when an external contract dictates the outcome, when an
-outcome is genuinely inadmissible and named as such, or when the decision is small
-enough that one balanced sentence carries the whole frame.
+Directive wording is correct when the author has already decided, when safety,
+legality, or destructiveness is at stake, when an external contract dictates the
+outcome, when an outcome is genuinely inadmissible and named as such, or when the
+text quotes a biased form in order to diagnose it. A decision with two obvious
+outcomes and one obvious criterion gets one balanced sentence instead of the full
+frame.
 ```
 
 </details>
@@ -490,7 +530,7 @@ npx skills ls -g    # if installed globally
 
 ```bash
 npx skills update neutral-prompt
-npx skills update -g    # if installed globally
+npx skills update neutral-prompt -g    # if installed globally
 ```
 
 ### Uninstall
@@ -502,8 +542,9 @@ npx skills remove neutral-prompt -g    # if installed globally
 
 ### Always-on (optional)
 
-Paste this into your agent's persistent rules file. Cursor: **Settings → Rules →
-User Rules**, or a project rule under `.cursor/rules/` with `alwaysApply: true`.
+Paste this into your agent's persistent rules file. Cursor: **Customize → Rules**
+(User Rules), or a project rule file under `.cursor/rules/` with the `.mdc`
+extension and `alwaysApply: true` in its frontmatter.
 
 ```markdown
 ## Prompt framing
@@ -514,19 +555,21 @@ safety rules, output contracts, budgets, or coding standards.
 
 1. Separate settled constraints from open decisions; write constraints as imperatives.
 2. Name the decision, not the answer.
-3. List every admissible outcome: proceed, stop, modify, preserve, accept, reject, defer.
+3. List every admissible outcome, drawn from: proceed, stop, modify, preserve, accept, reject, defer.
 4. Balance the negations — ruling out one default installs its opposite.
 5. Replace protected actions ("do not stop", "avoid changing", "always fix") with the criterion they were hiding.
 6. Order the prompt: gather evidence, evaluate alternatives, choose an action, record the reasoning.
 7. Keep the intensity symmetric across outcomes; "must continue" against "may stop" is a ranking.
-8. Make thresholds observable — replace "enough", "sufficient", "significant", "as needed", "premature".
+8. Make thresholds observable — replace "enough", "sufficient", "significant", "reasonable", "as needed", "premature".
 9. Require the decision record, not a particular decision.
 10. Do not manufacture balance: state the evidence you hold, withhold only the conclusion.
 
-Directive wording is correct when the author has already decided, when safety or
-legality is at stake, when an external contract dictates the outcome, when an
-outcome is genuinely inadmissible and named as such, or when the decision is small
-enough that one balanced sentence carries the whole frame.
+Directive wording is correct when the author has already decided, when safety,
+legality, or destructiveness is at stake, when an external contract dictates the
+outcome, when an outcome is genuinely inadmissible and named as such, or when the
+text quotes a biased form in order to diagnose it. A decision with two obvious
+outcomes and one obvious criterion gets one balanced sentence instead of the full
+frame.
 ```
 
 </details>
@@ -547,22 +590,25 @@ for the measured detection coverage.
 
 ## How activation works
 
-1. **Installed, not invoked.** In Claude Code, Qwen Code, and Codex, nothing
-   happens until you invoke the skill explicitly. Claude Code and Qwen Code honor
-   `disable-model-invocation: true` in `SKILL.md`; Codex honors
-   `policy.allow_implicit_invocation: false` in `agents/openai.yaml`. Other
-   harnesses may load every skill's description at startup and activate the skill
-   themselves.
-2. **You invoke it explicitly.** Type `/neutral-prompt` in Claude Code or Qwen
-   Code, or `$neutral-prompt` in Codex. The rules stay on for that session.
-   "stop neutral mode" or "normal mode" turns them off.
+1. **Installed, not invoked.** In Claude Code, Codex, Qwen Code, Kimi Code CLI,
+   Zed, Cursor, and Copilot (VS Code and CLI), nothing happens until you invoke the
+   skill explicitly. Codex honors `policy.allow_implicit_invocation: false` in
+   `agents/openai.yaml`; the others honor `disable-model-invocation: true` in
+   `SKILL.md`. OpenCode ignores that field and Gemini CLI does not document it, so
+   those harnesses may load the skill's description at startup and activate the
+   skill themselves.
+2. **You invoke it explicitly.** Type `/neutral-prompt` in Claude Code, Zed,
+   Cursor, or Copilot; `/neutral-prompt:neutral-prompt` in Qwen Code;
+   `/skill:neutral-prompt` in Kimi Code CLI; or `$neutral-prompt` in Codex. The
+   rules stay on for that session. "stop neutral mode" or "normal mode" turns them
+   off.
 3. **You touch `~/.claude/.neutral-prompt-always`** (Claude Code). A
    `SessionStart` hook loads the full ruleset from message one, every session.
 4. **You add the always-on snippet above** (other harnesses). Keeps the core rules
    in your agent's persistent context.
 
-In Claude Code, Qwen Code, and Codex there is no middle ground: if you did not
-turn it on, it is off.
+In the harnesses that item 1 names as honoring those fields there is no middle
+ground: if you did not turn it on, it is off.
 
 ## Troubleshooting
 
@@ -570,7 +616,7 @@ turn it on, it is off.
 read at startup.
 
 **Always-on flag has no effect.** Update the plugin
-(`claude plugin marketplace update neutral-prompt`) and restart. Hooks are read
+(`claude plugin update neutral-prompt@neutral-prompt`) and restart. Hooks are read
 at startup, and the flag needs the plugin version that ships `hooks/hooks.json`.
 
 **`claude plugin marketplace add` fails.** Use the `owner/repo` form. A local path

@@ -45,7 +45,7 @@ The failure this skill targets is a constraint written over the top of an open d
 Before writing, sort every requirement into two lists: what you have decided, and what the agent must decide. Write the first list as plain imperatives. Write the second list under the rules below.
 
 Bad (a decision phrased as a constraint): "Do not stop the running sub-agents."
-Good (constraint kept, decision opened): "Budget: no more than 20 minutes of further sub-agent execution. Within that budget, decide for each sub-agent whether to continue it, consume its results and stop it, or stop it as no longer useful."
+Good (constraint kept, decision opened): "Budget: no more than 20 minutes of further sub-agent execution. Within that budget, decide for each sub-agent whether to continue it, consume its results and stop it, stop it as no longer useful, or defer its disposition pending one more output."
 
 If you cannot say which list an item belongs to, it belongs in the second one. State it as a decision and let the evidence settle it.
 
@@ -58,7 +58,7 @@ Good: "Decide whether the background research task continues, stops, or narrows 
 
 ### 3. List every admissible outcome
 
-Name each action the agent may take. Draw from: **proceed, stop, modify, preserve, accept, reject, defer.** Omit an outcome only when it is genuinely inadmissible, and say why.
+Name each action the agent may take. Draw from: **proceed, stop, modify, preserve, accept, reject, defer** — categories to check the list against, not a list to copy. An action the agent could take but that is genuinely inadmissible is named and excluded, with the reason; a category with no counterpart in this decision needs no mention.
 
 Bad: "Decide whether to fix the finding."
 Good: "For each finding, choose one: fix it now, modify the surrounding design instead, preserve the current behavior, reject the finding as incorrect, or defer it to a tracked follow-up."
@@ -83,8 +83,8 @@ Every phrase that shields an action is a criterion the author declined to write.
 | "Do not stop the agents." | "Stop an agent when its remaining work duplicates evidence already collected." |
 | "Continue until the investigation is complete." | "Continue while the next step has a named question it can answer that the current evidence cannot." |
 | "Do not make unnecessary changes." | "Change code when a test, a requirement, a correctness defect, or a maintenance cost justifies it; leave it otherwise." |
-| "Make sure to fix all review findings." | "Fix a finding when it is reproducible and in scope; reject it with reasoning when it is not; defer it when it is real but out of scope." |
-| "Never reject a reviewer's suggestion." | "Accept a suggestion when it holds against the code and the requirements; reject it with the counter-evidence when it does not." |
+| "Make sure to fix all review findings." | "Fix a finding when it reproduces and is in scope; modify the surrounding design when it is real but a local fix would entrench it; preserve current behavior when that behavior meets the requirement; reject it with reasoning when it does not reproduce; defer it when it is real but out of scope." |
+| "Never reject a reviewer's suggestion." | "Accept a suggestion when it holds against the code and the requirements; accept it with a modification you specify when it holds only after a change; reject it with the counter-evidence when it does not hold; defer it when a named missing input would decide it." |
 
 ### 6. Order the prompt: evidence, alternatives, choice, record
 
@@ -115,7 +115,7 @@ Watch the modal verbs. "Must continue" against "may stop" is a ranking. So is "c
 State what the agent would have to see to select each outcome. A criterion that cannot be checked against the workspace is a preference in disguise.
 
 Bad: "Stop the sub-agent if it is no longer valuable."
-Good: "Stop the sub-agent when its last three outputs restate findings already in the report, or when its remaining steps target files another agent has already covered."
+Good: "Continue the sub-agent while any of its remaining steps targets a file no other agent has covered and at least one of its last three outputs adds a finding not already in the report. Stop it when its last three outputs restate findings already in the report, or when every file its remaining steps target is already covered by another agent."
 
 Vague quantities are the usual leak: "enough", "sufficient", "significant", "reasonable", "as needed". Replace them with a count, a file, a test, a time budget, or a named condition.
 
@@ -136,7 +136,7 @@ Bad (evidence withheld to look neutral): "Decide whether to continue the migrati
 Bad (conclusion smuggled in): "The migration is clearly failing, so decide whether to continue it."
 Good: "Two of the last three migration batches failed with the same timeout. Decide whether to continue, pause pending a fix, or stop and roll back, and say how the timeout evidence bears on your choice."
 
-If the honest state of the world is that one outcome is far more likely, say so as an observation with its support, and leave the decision open.
+If the evidence you hold points one way, put all of it in with its strength stated, and leave the decision open. The prompt reports what was observed; the agent says what it implies.
 
 ## The neutral frame
 
@@ -180,9 +180,9 @@ Each pattern below is directional **when it lands on an open decision**. On a se
 | "Continue until X is complete." | Makes stopping conditional on a finish line the agent cannot check. | "Continue while the next step can answer a named open question; stop when it cannot." |
 | "Do not stop unless you are sure." | Asymmetric burden of proof — one outcome needs certainty, the other needs nothing. | "Select the outcome the evidence supports; state the confidence for the one you pick." |
 | "Avoid unnecessary changes." | "Unnecessary" is decided after the fact; the agent hears "prefer no change". | "Change when justified by evidence, requirements, correctness, maintainability, or user impact; otherwise preserve." |
-| "Always accept the reviewer's findings." | Removes the evaluation entirely. | "Verify each finding against the code and the requirements; accept, reject with counter-evidence, or defer." |
+| "Always accept the reviewer's findings." | Removes the evaluation entirely. | "Verify each finding against the code and the requirements; accept, accept with modification, reject with counter-evidence, or defer." |
 | "Never reject a suggestion without asking." | Protects acceptance; makes rejection procedurally expensive. | "Accept or reject on the merits; escalate only when the decision needs authority you do not have." |
-| "Make sure to fix every issue you find." | Converts a scoping decision into an obligation. | "For each issue: fix, defer with a tracked follow-up, or reject with reasoning." |
+| "Make sure to fix every issue you find." | Converts a scoping decision into an obligation. | "For each issue: fix now, modify the surrounding design instead, preserve current behavior, reject with reasoning, or defer with a tracked follow-up." |
 | "Be thorough; leave nothing uninvestigated." | Prices further investigation at zero. | "Continue investigating while the expected information gain exceeds the cost; stop when it does not." |
 | "Do not stop prematurely." | "Prematurely" labels one outcome as the error mode. | "Stopping early and continuing too long are both failure modes. Name which risk dominates here and why." |
 | "Err on the side of caution." | Names a direction without naming the cost of erring that way. | "State the cost of each error direction, then choose the one with the lower expected cost." |
@@ -219,8 +219,8 @@ The outcomes are: accept, accept with modification, reject with reasoning, or de
 
 Three passes, in order. Report findings as a table: quoted text, rule violated, why it biases, replacement.
 
-1. **Locate the decision points.** Find every place the prompt hands over a choice. Mark which are open decisions and which are settled constraints (rule 1). Only the open ones are in scope.
-2. **Flag the directional wording.** At each open decision, check for: protected actions, unpaired negations, missing outcomes, asymmetric intensity, unobservable criteria, and a required conclusion. Quote the exact phrase; a finding without a quote is not a finding.
+1. **Locate the decision points.** Find every place the prompt hands over a choice. Mark which are open decisions and which are settled constraints (rule 1). Only the open ones are in scope. When you cannot tell whether the author settled an item, keep the author's wording in the rewrite and list the item in the findings with its open-decision form, marked as a proposal the author should confirm. Rule 1's tie-break is for authors sorting their own requirements, not for reviewers inferring someone else's.
+2. **Flag the directional wording.** At each open decision, check for: protected actions, unpaired negations, missing outcomes, asymmetric intensity, unobservable criteria, and a required conclusion. Quote the exact phrase; a finding without a quote is not a finding. The one exception is a missing outcome, which has nothing to quote: mark it "(absent)", name the outcome the list lacks, and cite rule 3.
 3. **Rewrite.** Produce the corrected text, not just a description of the problem. Preserve the author's settled constraints verbatim. Where a criterion was missing, propose one and mark it as a proposal the author should confirm.
 
 `scripts/scan_prompt.py` mechanizes pass 2 for the common patterns. It finds phrasings, not intent: confirm each hit against the decision it lands on, and keep reading for the patterns it cannot see — missing outcomes and asymmetric intensity have no reliable regex.
@@ -252,7 +252,8 @@ Override the default framing when:
 3. **The outcome is dictated externally.** A schema, an API contract, a compliance rule, a signed-off design. The agent's job is conformance, not choice.
 4. **One outcome is truly inadmissible.** Say so, and say why. A named exclusion is neutral; a silent one is not.
 5. **The prompt is a demonstration of the biased form.** Teaching material and test fixtures quote directional wording on purpose. Label the quote so it is not read as the recommendation.
-6. **The frame would bury the task.** For a decision with two obvious outcomes and one obvious criterion, one balanced sentence carries the whole frame. Symmetry matters; length does not.
+
+A decision with two obvious outcomes and one obvious criterion is not a case for directive wording either: one balanced sentence carries the whole frame. Symmetry matters; length does not.
 
 ## Pre-send check
 
@@ -260,7 +261,7 @@ Before sending a prompt, scan it for these six, and fix what you find:
 
 1. **Protected actions.** Any "do not <action>", "always <action>", "never <action>", or "make sure to <action>" landing on an open decision. Replace with the criterion.
 2. **Unpaired negations.** Any ruled-out default whose opposite is left standing. Pair it or drop it.
-3. **Missing outcomes.** Read the outcome list against proceed / stop / modify / preserve / accept / reject / defer. Add what is admissible; say why for what is not.
+3. **Missing outcomes.** Read the outcome list against proceed / stop / modify / preserve / accept / reject / defer. Add what is admissible and missing; name and exclude, with the reason, any action the agent could take that is genuinely inadmissible.
 4. **Asymmetric intensity.** Compare the outcomes for verb strength, length, and specificity. Level them.
 5. **Unobservable criteria.** Any "enough", "sufficient", "significant", "reasonable", "as needed", "premature". Replace with something checkable in the workspace.
 6. **A required conclusion.** Any request for reasoning that presumes the answer ("explain why you kept it running"). Ask for the record instead.

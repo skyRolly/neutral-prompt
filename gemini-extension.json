@@ -1,6 +1,6 @@
 {
   "name": "neutral-prompt",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Neutral decision framing for Gemini CLI prompts: name every admissible outcome, state observable criteria, and require a decision record.",
   "contextFileName": "GEMINI.md"
 }

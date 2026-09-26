@@ -48,7 +48,7 @@ When debugging or changing one integration, begin with its entry point:
 | Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `skills/neutral-prompt/agents/openai.yaml` |
 | Gemini CLI | `gemini-extension.json`, `GEMINI.md`, `skills/neutral-prompt/agents/gemini.toml` |
 | Qwen Code, Kimi Code | `qwen-extension.json`, `kimi.plugin.json` |
-| OpenCode | `.opencode/command/neutral-prompt.md` (OpenCode also reads `skills/` natively) |
+| OpenCode | `.opencode/command/neutral-prompt.md` (the command invokes the skill, which OpenCode loads from its own skill directories, not from this repository's `skills/`) |
 | Cursor, Copilot, Zed, other skills harnesses | `skills/neutral-prompt/SKILL.md`, `.cursor/skills/neutral-prompt/SKILL.md` |
 
 ## Source-of-truth rules
@@ -58,8 +58,10 @@ When debugging or changing one integration, begin with its entry point:
 - A scanner rule exists in three places at once: an entry in
   `skills/neutral-prompt/references/patterns.md`, a `Rule` in
   `scripts/scan_prompt.py`, and at least one labeled case in
-  `evals/cases.jsonl`. `python3 scripts/run_evals.py scan` fails until the three
-  agree, and `tests/test_run_evals.py` fails when a rule has no labeled case.
+  `evals/cases.jsonl`. `tests/test_scan_prompt.py` fails when the catalog and the
+  detector disagree on ids or titles, `tests/test_run_evals.py` fails when a rule
+  has no labeled case, and `python3 scripts/run_evals.py scan` fails when any
+  case's findings differ from its label.
 - Treat manifests and hook declarations as runtime contracts. Keep shared
   metadata, including versions, aligned across manifest files;
   `tests/test_repo_integrity.py` enforces this.
@@ -83,7 +85,12 @@ python3 -m unittest discover -s tests -v
 python3 scripts/run_evals.py validate
 python3 scripts/run_evals.py scan
 claude plugin validate .
+claude plugin validate .claude-plugin/plugin.json
 ```
+
+`claude plugin validate .` checks the marketplace manifest only;
+`claude plugin validate .claude-plugin/plugin.json` checks the plugin manifest and
+its hook declaration.
 
 The Python checks need no third-party packages and make no network calls. Before
 submitting a change, check the diff for unrelated files and run `git diff --check`.
